@@ -41,8 +41,8 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
 
-APURVA: {
-    password:    'USHMAJITU',
+SAPURVA: {
+    password:    'BAPAJI2026',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
