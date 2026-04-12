@@ -59,7 +59,14 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
    
-
+ /* ── ALKEM HC REP ── */
+  ROSHAN: {
+    password:    '1806',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM( HC)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
 
   
   /* ── ALKEM ── */
