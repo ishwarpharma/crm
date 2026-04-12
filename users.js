@@ -99,8 +99,8 @@ const USERS = {
   },
 
   /* ── THEOGEN ── */
-  THEOGEN: {
-    password:    'THEOGEN',
+  VIJAY: {
+    password:    'VIJAYRAJ',
     displayName: 'Theogen Team',
     companies:   ['THEOGEN', 'THEOGEN(NET)'],
     areas:       null,
