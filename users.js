@@ -77,6 +77,15 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
    
+PRAJJWAL: {
+    password:    'SUNNY1504',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+
+
    
    
    /* ── AKUMENTIS REP ── */
