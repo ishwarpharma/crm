@@ -1,16 +1,18 @@
-/* ══════════════════════════════════════════════════════════
-   script.js  —  SalesView Dashboard Logic
-   Requires: users.js (loaded before this file in index.html)
-             Chart.js  (loaded before this file in index.html)
-   ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   script.js  —  IshwarCRM Dashboard
+   Requires: users.js loaded before this in index.html
+             Chart.js  loaded before this in index.html
+   ══════════════════════════════════════════════════════════════ */
 
-/* ── STATE ── */
-let allData     = [];   // rows visible to this user (company-filtered)
-let currentUser = null; // logged-in user object
+/* ── APP STATE ── */
+let allData     = [];   // all rows visible to this user (restricted at login)
+let currentUser = null; // logged-in user object from USERS
 let chart       = null; // Chart.js instance
 
+/* Dashboard filter state */
 let selPeriod = 'all';
 let selArea   = '';
+let selSM     = '';     // selected Sales Man (filter panel)
 let selParty  = '';
 let selItem   = '';
 
@@ -28,9 +30,7 @@ function attemptLogin() {
   const pw  = document.getElementById('inp-pw').value;
   const err = document.getElementById('login-err');
 
-  // USERS comes from users.js
   const user = (typeof USERS !== 'undefined') ? USERS[un] : null;
-
   if (!user || user.password !== pw) {
     err.classList.remove('hidden');
     document.getElementById('inp-pw').value = '';
@@ -40,48 +40,48 @@ function attemptLogin() {
   err.classList.add('hidden');
   currentUser = { username: un, ...user };
 
-  // Update header
-  document.getElementById('hdr-av').textContent  = un.charAt(0);
-  document.getElementById('hdr-co').textContent  = user.companies
-    ? user.companies.join(' · ')
-    : 'All Companies';
+  /* Header sub-line: show what restrictions apply */
+  document.getElementById('hdr-av').textContent = un.charAt(0);
+  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
 
-  // Show app
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
   loadCSV();
 }
 
-/* Allow Enter key on login screen */
+function buildAccessLabel(user) {
+  const parts = [];
+  if (user.companies) parts.push(user.companies.join(', '));
+  else parts.push('All Companies');
+  if (user.areas)    parts.push(user.areas.length === 1 ? user.areas[0] : user.areas.length + ' Areas');
+  if (user.salesmen) parts.push(user.salesmen.join(', '));
+  return parts.join(' · ');
+}
+
+/* Enter key on login */
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' &&
-      !document.getElementById('login-screen').classList.contains('hidden')) {
+      !document.getElementById('login-screen').classList.contains('hidden'))
     attemptLogin();
-  }
 });
 
 function logout() {
   currentUser = null;
   allData     = [];
-  selPeriod   = 'all';
-  selArea     = '';
-  selParty    = '';
-  selItem     = '';
+  selPeriod = 'all'; selArea = ''; selSM = ''; selParty = ''; selItem = '';
 
   if (chart) { chart.destroy(); chart = null; }
 
-  // Reset login form
   document.getElementById('inp-un').value = '';
   document.getElementById('inp-pw').value = '';
   document.getElementById('login-err').classList.add('hidden');
 
-  // Reset sheet UI
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="all"]').classList.add('active');
   document.getElementById('area-sel').value = '';
+  document.getElementById('sm-sel').value   = '';
 
-  // Clear searches
   clearParty(false);
   clearItem(false);
 
@@ -100,13 +100,10 @@ async function loadCSV() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     parseCSV(text);
-    initAreaDropdown();
+    initDropdowns();
     renderAll();
   } catch (e) {
-    alert(
-      'Could not load SWSA.csv.\n' +
-      'Make sure all files are in the SAME folder.\n\n' + e.message
-    );
+    alert('Could not load SWSA.csv.\nMake sure all 5 files are in the SAME folder.\n\n' + e.message);
   } finally {
     showVeil(false);
   }
@@ -117,7 +114,7 @@ function parseCSV(text) {
   if (lines.length < 2) return;
 
   const header = csvLine(lines[0]);
-  const col = name => header.indexOf(name);
+  const col    = name => header.indexOf(name);
 
   const iSM    = col('Sales Men');
   const iDate  = col('Date');
@@ -141,35 +138,37 @@ function parseCSV(text) {
     const c  = csvLine(ln);
     const co = (c[iCo] || '').trim();
 
-    // Skip blank, header-repeat, or numeric garbage rows
+    /* Skip blank, header-repeat, purely-numeric rows */
     if (!co || co === 'Company Name' || !isNaN(Number(co))) continue;
 
-    // Company access check
-    if (currentUser.companies && !currentUser.companies.includes(co)) continue;
+    const sm   = (c[iSM]    || '').trim();
+    const area = (c[iArea]  || '').trim();
 
-    const dateStr = (c[iDate] || '').trim();
-    const amount  = parseFloat(c[iAmt]) || 0;
+    /* ── USER ACCESS RESTRICTIONS ── */
+    if (currentUser.companies && !currentUser.companies.includes(co))   continue;
+    if (currentUser.areas     && !currentUser.areas.includes(area))     continue;
+    if (currentUser.salesmen  && !currentUser.salesmen.includes(sm))    continue;
 
     rows.push({
-      sm:     (c[iSM]    || '').trim(),
+      sm,
       bill:   (c[iBill]  || '').trim(),
-      date:   parseDate(dateStr),
+      date:   parseDate((c[iDate] || '').trim()),
       type:   (c[iType]  || '').trim(),
       party:  (c[iParty] || '').trim(),
       item:   (c[iItem]  || '').trim(),
       qty:    parseFloat(c[iQty])  || 0,
       rate:   parseFloat(c[iRate]) || 0,
       disc:   parseFloat(c[iDisc]) || 0,
-      amount,
+      amount: parseFloat(c[iAmt])  || 0,
       co,
-      area: (c[iArea] || '').trim(),
+      area,
     });
   }
 
   allData = rows;
 }
 
-/* Simple CSV line splitter (handles quoted fields) */
+/* Simple CSV splitter (handles quoted fields) */
 function csvLine(line) {
   const result = [];
   let cur = '', inQ = false;
@@ -185,8 +184,8 @@ function csvLine(line) {
 
 /* Parse  dd-Mon-yy  OR  dd-mm-yyyy  OR  dd/mm/yyyy */
 const MON = {
-  jan:0, feb:1, mar:2, apr:3, may:4,  jun:5,
-  jul:6, aug:7, sep:8, oct:9, nov:10, dec:11,
+  jan:0,feb:1,mar:2,apr:3,may:4,jun:5,
+  jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
 };
 function parseDate(s) {
   if (!s) return null;
@@ -194,9 +193,7 @@ function parseDate(s) {
   if (p.length < 3) return null;
   const day = parseInt(p[0], 10);
   let month, year;
-
   if (isNaN(parseInt(p[1], 10))) {
-    // e.g. "20-Dec-25"
     month = MON[p[1].toLowerCase().slice(0, 3)];
     year  = parseInt(p[2], 10);
     if (year < 100) year += year < 50 ? 2000 : 1900;
@@ -205,29 +202,43 @@ function parseDate(s) {
     year  = parseInt(p[2], 10);
     if (year < 100) year += year < 50 ? 2000 : 1900;
   }
-
   if (isNaN(day) || month == null || isNaN(year)) return null;
   return new Date(year, month, day);
 }
 
 
 /* ══════════════════════════════════════
-   AREA DROPDOWN INIT
+   DROPDOWN INIT (Area + Sales Men)
 ══════════════════════════════════════ */
-function initAreaDropdown() {
+function initDropdowns() {
+  /* Area */
   const areas = [...new Set(
     allData.map(r => r.area).filter(a =>
       a && !a.startsWith('#') && a !== '..' && a !== 'Area Name'
     )
   )].sort();
 
-  const sel = document.getElementById('area-sel');
-  sel.innerHTML = '<option value="">All Areas</option>';
+  const areaSel = document.getElementById('area-sel');
+  areaSel.innerHTML = '<option value="">All Areas</option>';
   areas.forEach(a => {
     const o = document.createElement('option');
-    o.value = a;
-    o.textContent = a;
-    sel.appendChild(o);
+    o.value = a; o.textContent = a;
+    areaSel.appendChild(o);
+  });
+
+  /* Sales Men — exclude discontinued (X/x prefix) and SUSPENCE */
+  const smList = [...new Set(
+    allData.map(r => r.sm).filter(s =>
+      s && s !== 'Sales Men' && !s.toUpperCase().startsWith('X') && !s.includes('SUSPENCE')
+    )
+  )].sort();
+
+  const smSel = document.getElementById('sm-sel');
+  smSel.innerHTML = '<option value="">All Sales Men</option>';
+  smList.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    smSel.appendChild(o);
   });
 }
 
@@ -275,14 +286,16 @@ function closeSheet() {
 }
 function applySheet() {
   selArea = document.getElementById('area-sel').value;
+  selSM   = document.getElementById('sm-sel').value;
   closeSheet();
   renderAll();
 }
 function resetFilters() {
-  selPeriod = 'all'; selArea = ''; selParty = ''; selItem = '';
+  selPeriod = 'all'; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="all"]').classList.add('active');
   document.getElementById('area-sel').value = '';
+  document.getElementById('sm-sel').value   = '';
   clearParty(false);
   clearItem(false);
   closeSheet();
@@ -291,12 +304,13 @@ function resetFilters() {
 
 
 /* ══════════════════════════════════════
-   FILTER BADGE + CHIPS
+   BADGE + CHIPS
 ══════════════════════════════════════ */
 function updateBadge() {
   let n = 0;
   if (selPeriod !== 'all') n++;
   if (selArea)   n++;
+  if (selSM)     n++;
   if (selParty)  n++;
   if (selItem)   n++;
   const el = document.getElementById('fbadge');
@@ -309,7 +323,7 @@ function updateChips() {
   row.innerHTML = '';
 
   const addChip = (label, onRemove) => {
-    const c = document.createElement('div');
+    const c  = document.createElement('div');
     c.className = 'chip';
     const lbl = document.createElement('span');
     lbl.textContent = label;
@@ -323,22 +337,21 @@ function updateChips() {
     row.appendChild(c);
   };
 
-  if (selParty) {
-    addChip('Party: ' + truncate(selParty, 22), () => clearParty(true));
-  }
-  if (selItem) {
-    addChip('Item: ' + truncate(selItem, 22), () => clearItem(true));
-  }
-  if (selArea) {
-    addChip('Area: ' + selArea, () => {
-      selArea = '';
-      document.getElementById('area-sel').value = '';
-      renderAll();
-    });
-  }
+  if (selParty) addChip('Party: '  + truncate(selParty, 22), () => clearParty(true));
+  if (selItem)  addChip('Item: '   + truncate(selItem, 22),  () => clearItem(true));
+  if (selSM)    addChip('SM: '     + truncate(selSM, 22),    () => {
+    selSM = '';
+    document.getElementById('sm-sel').value = '';
+    renderAll();
+  });
+  if (selArea)  addChip('Area: '   + selArea, () => {
+    selArea = '';
+    document.getElementById('area-sel').value = '';
+    renderAll();
+  });
   if (selPeriod !== 'all') {
     const labels = { '1m': 'This Month', '3m': 'Last 3M', '6m': 'Last 6M', '1y': 'Last 1Y' };
-    addChip(labels[selPeriod] || selPeriod, () => {
+    addChip(labels[selPeriod], () => {
       selPeriod = 'all';
       document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
       document.querySelector('.pb[data-p="all"]').classList.add('active');
@@ -356,6 +369,7 @@ function updateChips() {
 function getFiltered() {
   let d = applyPeriod(allData);
   if (selArea)  d = d.filter(r => r.area  === selArea);
+  if (selSM)    d = d.filter(r => r.sm    === selSM);
   if (selParty) d = d.filter(r => r.party === selParty);
   if (selItem)  d = d.filter(r => r.item  === selItem);
   return d;
@@ -401,7 +415,7 @@ function renderKPIs(data) {
 /* ══════════════════════════════════════
    CHART
 ══════════════════════════════════════ */
-function buildMonthlyData(data) {
+function buildMonthly(data) {
   const map = {};
   data.forEach(r => {
     if (!r.date) return;
@@ -412,27 +426,26 @@ function buildMonthlyData(data) {
   return {
     labels: keys.map(k => {
       const [y, m] = k.split('-');
-      return new Date(+y, +m - 1, 1)
-        .toLocaleString('default', { month: 'short', year: '2-digit' });
+      return new Date(+y, +m - 1, 1).toLocaleString('default', { month: 'short', year: '2-digit' });
     }),
     values: keys.map(k => map[k]),
   };
 }
 
 function renderChart(data) {
-  const { labels, values } = buildMonthlyData(data);
+  const { labels, values } = buildMonthly(data);
 
-  // Title
   let ttl = 'Monthly Trend';
-  if (selParty) ttl = truncate(selParty, 30);
-  else if (selItem) ttl = truncate(selItem, 30);
+  if (selSM)     ttl = truncate(selSM, 28);
+  if (selParty)  ttl = truncate(selParty, 28);
+  if (selItem)   ttl = truncate(selItem, 28);
+
   document.getElementById('chart-ttl').textContent = ttl;
   document.getElementById('chart-tag').textContent = labels.length + ' months';
 
   const ctx = document.getElementById('chart').getContext('2d');
   if (chart) chart.destroy();
 
-  // Gradient bar fill
   const grad = ctx.createLinearGradient(0, 0, 0, 200);
   grad.addColorStop(0, 'rgba(37,99,235,.75)');
   grad.addColorStop(1, 'rgba(37,99,235,.15)');
@@ -507,25 +520,27 @@ function groupBy(data, key) {
 }
 
 function renderTables(data) {
-  // Party table
+  /* Party table context */
   const pRows = groupBy(data, 'party');
-  document.getElementById('pty-ttl').textContent = selItem
-    ? 'Parties — ' + truncate(selItem, 20)
-    : selParty ? truncate(selParty, 26) : 'Party Sales';
+  let pTitle = 'Party Sales';
+  if (selItem)  pTitle = 'Parties — ' + truncate(selItem, 20);
+  else if (selParty) pTitle = truncate(selParty, 26);
+  document.getElementById('pty-ttl').textContent = pTitle;
   document.getElementById('pty-cnt').textContent = pRows.length + ' parties';
   fillTable('pty-body', pRows, 'party');
 
-  // Item table
+  /* Item table context */
   const iRows = groupBy(data, 'item');
-  document.getElementById('itm-ttl').textContent = selParty
-    ? 'Items — ' + truncate(selParty, 20)
-    : selItem ? truncate(selItem, 26) : 'Item Sales';
+  let iTitle = 'Item Sales';
+  if (selParty) iTitle = 'Items — ' + truncate(selParty, 20);
+  else if (selItem) iTitle = truncate(selItem, 26);
+  document.getElementById('itm-ttl').textContent = iTitle;
   document.getElementById('itm-cnt').textContent = iRows.length + ' items';
   fillTable('itm-body', iRows, 'item');
 }
 
 function fillTable(tbodyId, rows, type) {
-  const tbody  = document.getElementById(tbodyId);
+  const tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
 
   if (!rows.length) {
@@ -540,25 +555,14 @@ function fillTable(tbodyId, rows, type) {
     const tr = document.createElement('tr');
     if (row.name === active) tr.classList.add('row-sel');
 
-    const td0 = document.createElement('td');
-    td0.textContent = i + 1;
+    const td0 = document.createElement('td'); td0.textContent = i + 1;
+    const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
+    const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
 
-    const td1 = document.createElement('td');
-    td1.textContent = row.name;
-    td1.title = row.name;
-
-    const td2 = document.createElement('td');
-    td2.textContent = fmtMoney(row.amount);
-
-    tr.appendChild(td0);
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-
-    // Click / tap to drill down
+    tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
     tr.addEventListener('click', () => {
       type === 'party' ? setParty(row.name) : setItem(row.name);
     });
-
     tbody.appendChild(tr);
   });
 }
@@ -578,31 +582,20 @@ function showPartyDrop() {
   const q    = document.getElementById('party-inp').value.trim();
   const drop = document.getElementById('party-drop');
 
-  // Build name→total map from base (period + area filtered, no party/item filter)
-  const base = applyPeriod(selArea ? allData.filter(r => r.area === selArea) : allData);
+  /* Base = period + area + SM filtered, no party/item drill */
+  const base = getBase();
   const pmap = {};
   base.forEach(r => { if (r.party) pmap[r.party] = (pmap[r.party] || 0) + r.amount; });
 
   const matches = fuzzySort(Object.keys(pmap), q).slice(0, 60);
-
   if (!matches.length) { drop.classList.add('hidden'); return; }
 
   drop.innerHTML = '';
   matches.forEach(name => {
-    const d   = document.createElement('div');
-    d.className = 'drop-item';
-
-    const nm  = document.createElement('span');
-    nm.className = 'drop-name';
-    nm.innerHTML  = highlight(name, q);
-
-    const amt = document.createElement('span');
-    amt.className = 'drop-amt';
-    amt.textContent = fmtMoney(pmap[name]);
-
-    d.appendChild(nm);
-    d.appendChild(amt);
-
+    const d  = document.createElement('div'); d.className = 'drop-item';
+    const nm = document.createElement('span'); nm.className = 'drop-name'; nm.innerHTML = highlight(name, q);
+    const am = document.createElement('span'); am.className = 'drop-amt';  am.textContent = fmtMoney(pmap[name]);
+    d.appendChild(nm); d.appendChild(am);
     d.addEventListener('touchstart', e => { e.preventDefault(); setParty(name); }, { passive: false });
     d.addEventListener('mousedown',  e => { e.preventDefault(); setParty(name); });
     drop.appendChild(d);
@@ -611,13 +604,11 @@ function showPartyDrop() {
 }
 
 function setParty(name) {
-  selParty = name;
-  selItem  = '';
+  selParty = name; selItem = '';
   document.getElementById('party-inp').value = name;
   document.getElementById('party-clr').classList.remove('hidden');
   document.getElementById('sbox-party').classList.add('s-active');
   document.getElementById('party-drop').classList.add('hidden');
-  // Clear item
   document.getElementById('item-inp').value = '';
   document.getElementById('item-clr').classList.add('hidden');
   document.getElementById('sbox-item').classList.remove('s-active');
@@ -651,30 +642,19 @@ function showItemDrop() {
   const q    = document.getElementById('item-inp').value.trim();
   const drop = document.getElementById('item-drop');
 
-  const base = applyPeriod(selArea ? allData.filter(r => r.area === selArea) : allData);
+  const base = getBase();
   const imap = {};
   base.forEach(r => { if (r.item) imap[r.item] = (imap[r.item] || 0) + r.amount; });
 
   const matches = fuzzySort(Object.keys(imap), q).slice(0, 60);
-
   if (!matches.length) { drop.classList.add('hidden'); return; }
 
   drop.innerHTML = '';
   matches.forEach(name => {
-    const d   = document.createElement('div');
-    d.className = 'drop-item';
-
-    const nm  = document.createElement('span');
-    nm.className = 'drop-name';
-    nm.innerHTML  = highlight(name, q);
-
-    const amt = document.createElement('span');
-    amt.className = 'drop-amt';
-    amt.textContent = fmtMoney(imap[name]);
-
-    d.appendChild(nm);
-    d.appendChild(amt);
-
+    const d  = document.createElement('div'); d.className = 'drop-item';
+    const nm = document.createElement('span'); nm.className = 'drop-name'; nm.innerHTML = highlight(name, q);
+    const am = document.createElement('span'); am.className = 'drop-amt';  am.textContent = fmtMoney(imap[name]);
+    d.appendChild(nm); d.appendChild(am);
     d.addEventListener('touchstart', e => { e.preventDefault(); setItem(name); }, { passive: false });
     d.addEventListener('mousedown',  e => { e.preventDefault(); setItem(name); });
     drop.appendChild(d);
@@ -683,13 +663,11 @@ function showItemDrop() {
 }
 
 function setItem(name) {
-  selItem  = name;
-  selParty = '';
+  selItem = name; selParty = '';
   document.getElementById('item-inp').value = name;
   document.getElementById('item-clr').classList.remove('hidden');
   document.getElementById('sbox-item').classList.add('s-active');
   document.getElementById('item-drop').classList.add('hidden');
-  // Clear party
   document.getElementById('party-inp').value = '';
   document.getElementById('party-clr').classList.add('hidden');
   document.getElementById('sbox-party').classList.remove('s-active');
@@ -711,10 +689,19 @@ document.getElementById('item-inp').addEventListener('blur', () => {
 
 
 /* ══════════════════════════════════════
-   UTILITIES
+   HELPERS
 ══════════════════════════════════════ */
 
-/* Fuzzy search — returns matches sorted by relevance */
+/* Base data = period + area + SM applied (no party/item drill)
+   Used to populate search dropdowns */
+function getBase() {
+  let d = applyPeriod(allData);
+  if (selArea) d = d.filter(r => r.area === selArea);
+  if (selSM)   d = d.filter(r => r.sm   === selSM);
+  return d;
+}
+
+/* Fuzzy search — sorted by match quality */
 function fuzzySort(list, q) {
   if (!q) return list;
   const lq = q.toLowerCase();
@@ -731,36 +718,28 @@ function fuzzySort(list, q) {
 
 function fuzzyMatch(str, q) {
   let qi = 0;
-  for (let i = 0; i < str.length && qi < q.length; i++) {
+  for (let i = 0; i < str.length && qi < q.length; i++)
     if (str[i] === q[qi]) qi++;
-  }
   return qi === q.length;
 }
 
-/* Highlight matching text in yellow */
 function highlight(text, q) {
   if (!q) return escHtml(text);
-  const safe = escHtml(text);
-  const re   = new RegExp(`(${escRe(q)})`, 'gi');
-  return safe.replace(re, '<mark>$1</mark>');
+  return escHtml(text).replace(
+    new RegExp(`(${escRe(q)})`, 'gi'),
+    '<mark>$1</mark>'
+  );
 }
 
 function escHtml(s) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-
 function escRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
 function truncate(s, n) {
   return s.length > n ? s.slice(0, n) + '…' : s;
 }
-
-/* Show / hide loading overlay */
 function showVeil(on) {
   document.getElementById('veil').style.display = on ? 'flex' : 'none';
 }

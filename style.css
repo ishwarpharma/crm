@@ -1,20 +1,16 @@
 /* ══════════════════════════════════════════════
-   style.css  —  SalesView Dashboard
-   Mobile-first · iOS safe-area · Power BI vibes
+   style.css  —  IshwarCRM Dashboard
+   Mobile-first · iOS safe-area · Power BI feel
    ══════════════════════════════════════════════ */
 
-/* ── DESIGN TOKENS ── */
+/* ── TOKENS ── */
 :root {
-  /* Brand */
   --navy:      #0d1b3e;
   --navy2:     #152347;
   --navy3:     #1c2e5c;
   --blue:      #2563eb;
   --blue2:     #3b82f6;
   --blue-lt:   #eff6ff;
-  --blue-glow: rgba(59,130,246,.18);
-
-  /* Accents */
   --gold:      #f59e0b;
   --gold-lt:   #fef3c7;
   --emerald:   #10b981;
@@ -23,7 +19,6 @@
   --rose-lt:   #ffe4e6;
   --violet:    #8b5cf6;
 
-  /* Surface */
   --bg:        #f0f2f8;
   --card:      #ffffff;
   --border:    #e2e8f0;
@@ -32,18 +27,15 @@
   --text2:     #475569;
   --text3:     #94a3b8;
 
-  /* Layout */
   --hdr-h:     56px;
   --r:         16px;
   --r-sm:      10px;
   --shadow:    0 1px 3px rgba(0,0,0,.06), 0 6px 20px rgba(0,0,0,.07);
   --shadow-lg: 0 8px 40px rgba(0,0,0,.15);
 
-  /* Typography */
   --font:      'Sora', sans-serif;
   --mono:      'JetBrains Mono', monospace;
 
-  /* Safe areas (iPhone notch / home bar) */
   --sat: env(safe-area-inset-top,    0px);
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left,   0px);
@@ -51,11 +43,7 @@
 }
 
 /* ── RESET ── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html {
   font-size: 15px;
   -webkit-text-size-adjust: 100%;
@@ -86,8 +74,6 @@ input, select, button { font-family: var(--font); }
   position: relative;
   overflow: hidden;
 }
-
-/* Background glow orbs */
 .orb {
   position: absolute;
   border-radius: 50%;
@@ -113,7 +99,6 @@ input, select, button { font-family: var(--font); }
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .login-brand {
   display: flex;
   align-items: center;
@@ -135,7 +120,6 @@ input, select, button { font-family: var(--font); }
   color: var(--navy);
   letter-spacing: -.4px;
 }
-
 .login-h {
   font-size: 1.5rem;
   font-weight: 800;
@@ -148,8 +132,6 @@ input, select, button { font-family: var(--font); }
   color: var(--text3);
   margin-bottom: 26px;
 }
-
-/* Form fields */
 .fld { margin-bottom: 16px; }
 .fld-lbl {
   display: block;
@@ -170,7 +152,6 @@ input, select, button { font-family: var(--font); }
   left: 13px;
   color: var(--text3);
   pointer-events: none;
-  flex-shrink: 0;
 }
 .fld-wrap input {
   width: 100%;
@@ -203,7 +184,6 @@ input, select, button { font-family: var(--font); }
   transition: color .2s;
 }
 .eye-btn:active { color: var(--blue); }
-
 .login-err {
   display: flex;
   align-items: center;
@@ -217,7 +197,6 @@ input, select, button { font-family: var(--font); }
   font-weight: 500;
   margin-bottom: 14px;
 }
-
 .btn-login {
   width: 100%;
   padding: 14px;
@@ -229,13 +208,11 @@ input, select, button { font-family: var(--font); }
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  letter-spacing: .1px;
   -webkit-appearance: none;
   transition: transform .15s, box-shadow .15s;
 }
 .btn-login:hover  { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,.4); }
 .btn-login:active { transform: scale(.98); }
-
 .demo-hint {
   text-align: center;
   font-size: .74rem;
@@ -243,7 +220,6 @@ input, select, button { font-family: var(--font); }
   margin-top: 16px;
 }
 .demo-hint b { color: var(--text2); }
-
 
 /* ══════════════════════════════════════
    APP SHELL
@@ -274,9 +250,7 @@ input, select, button { font-family: var(--font); }
   width: 32px; height: 32px;
   background: rgba(255,255,255,.1);
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 .hdr-title {
@@ -290,13 +264,12 @@ input, select, button { font-family: var(--font); }
   color: rgba(255,255,255,.5);
   margin-top: 1px;
   letter-spacing: .3px;
-  max-width: 160px;
+  max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .hdr-r { display: flex; align-items: center; gap: 8px; }
-
 .hdr-filter-btn {
   display: flex;
   align-items: center;
@@ -315,7 +288,6 @@ input, select, button { font-family: var(--font); }
   white-space: nowrap;
 }
 .hdr-filter-btn:active { background: rgba(255,255,255,.22); }
-
 .fbadge {
   position: absolute;
   top: -5px; right: -5px;
@@ -328,7 +300,6 @@ input, select, button { font-family: var(--font); }
   min-width: 16px;
   text-align: center;
 }
-
 .hdr-av {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -338,15 +309,12 @@ input, select, button { font-family: var(--font); }
   font-size: .8rem;
   font-weight: 700;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   -webkit-appearance: none;
   flex-shrink: 0;
   transition: transform .15s;
 }
 .hdr-av:active { transform: scale(.92); }
-
 
 /* ── SCROLL BODY ── */
 .body-scroll {
@@ -356,7 +324,6 @@ input, select, button { font-family: var(--font); }
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
-
 
 /* ── FILTER CHIPS ── */
 .chips-row {
@@ -369,7 +336,6 @@ input, select, button { font-family: var(--font); }
   flex-shrink: 0;
 }
 .chips-row::-webkit-scrollbar { display: none; }
-
 .chip {
   display: inline-flex;
   align-items: center;
@@ -397,14 +363,11 @@ input, select, button { font-family: var(--font); }
   width: 16px; height: 16px;
   font-size: .58rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   padding: 0;
   -webkit-appearance: none;
 }
 .chip-x:active { background: var(--rose); color: #fff; }
-
 
 /* ── KPI BLOCK ── */
 .kpi-block {
@@ -413,7 +376,6 @@ input, select, button { font-family: var(--font); }
   gap: 10px;
   padding: 14px 14px 0;
 }
-
 .kpi-hero {
   background: linear-gradient(145deg, var(--navy) 0%, #1a3a7a 100%);
   border-radius: var(--r);
@@ -456,7 +418,6 @@ input, select, button { font-family: var(--font); }
   color: rgba(255,255,255,.4);
   margin-top: 9px;
 }
-
 .kpi-trio {
   display: flex;
   flex-direction: column;
@@ -486,7 +447,6 @@ input, select, button { font-family: var(--font); }
   letter-spacing: .2px;
 }
 
-
 /* ── SEARCH BARS ── */
 .search-block {
   padding: 12px 14px 0;
@@ -494,7 +454,6 @@ input, select, button { font-family: var(--font); }
   flex-direction: column;
   gap: 8px;
 }
-
 .sbox {
   position: relative;
   background: var(--card);
@@ -531,7 +490,6 @@ input, select, button { font-family: var(--font); }
   min-width: 0;
 }
 .sinp::placeholder { color: var(--text3); }
-
 .sclr {
   background: var(--text3);
   color: #fff;
@@ -540,16 +498,13 @@ input, select, button { font-family: var(--font); }
   width: 20px; height: 20px;
   font-size: .6rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   margin-right: 10px;
   -webkit-appearance: none;
   transition: background .15s;
 }
 .sclr:active { background: var(--rose); }
-
 .sdrop {
   position: absolute;
   top: calc(100% + 6px);
@@ -570,7 +525,6 @@ input, select, button { font-family: var(--font); }
 }
 .sdrop::-webkit-scrollbar { width: 4px; }
 .sdrop::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
 .drop-item {
   padding: 12px 14px;
   font-size: .84rem;
@@ -581,7 +535,6 @@ input, select, button { font-family: var(--font); }
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  transition: background .1s;
   -webkit-tap-highlight-color: transparent;
 }
 .drop-item:last-child { border-bottom: none; }
@@ -602,7 +555,6 @@ input, select, button { font-family: var(--font); }
   white-space: nowrap;
 }
 
-
 /* ── CARDS ── */
 .card {
   background: var(--card);
@@ -612,7 +564,6 @@ input, select, button { font-family: var(--font); }
   border: 1px solid var(--border2);
   overflow: hidden;
 }
-
 .card-hdr {
   display: flex;
   align-items: center;
@@ -641,14 +592,12 @@ input, select, button { font-family: var(--font); }
   flex-shrink: 0;
 }
 
-
 /* ── CHART ── */
 .chart-wrap {
   padding: 14px 12px 12px;
   height: 200px;
   position: relative;
 }
-
 
 /* ── TABLES ── */
 .tbl-wrap {
@@ -659,7 +608,6 @@ input, select, button { font-family: var(--font); }
 }
 .tbl-wrap::-webkit-scrollbar { width: 3px; }
 .tbl-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
 .tbl {
   width: 100%;
   border-collapse: collapse;
@@ -678,8 +626,8 @@ input, select, button { font-family: var(--font); }
   color: var(--text3);
   border-bottom: 1.5px solid var(--border);
 }
-.tbl th:first-child  { width: 36px; }
-.tbl th:last-child   { text-align: right; width: 72px; }
+.tbl th:first-child { width: 36px; }
+.tbl th:last-child  { text-align: right; width: 72px; }
 .tbl td {
   padding: 11px 12px;
   border-bottom: 1px solid var(--border2);
@@ -689,8 +637,8 @@ input, select, button { font-family: var(--font); }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.tbl td:first-child  { color: var(--text3); font-size: .72rem; }
-.tbl td:last-child   {
+.tbl td:first-child { color: var(--text3); font-size: .72rem; }
+.tbl td:last-child  {
   text-align: right;
   font-family: var(--mono);
   font-size: .75rem;
@@ -698,14 +646,13 @@ input, select, button { font-family: var(--font); }
   color: var(--blue);
 }
 .tbl tbody tr:nth-child(even) { background: #fafbfc; }
-.tbl tbody tr { transition: background .1s; -webkit-tap-highlight-color: transparent; }
+.tbl tbody tr { -webkit-tap-highlight-color: transparent; }
 .tbl tbody tr:active { background: var(--blue-lt); }
 .tbl tbody tr.row-sel {
   background: var(--blue-lt);
   border-left: 3px solid var(--blue);
 }
 .tbl tbody tr.row-sel td:first-child { padding-left: 9px; }
-
 
 /* ── BOTTOM SHEET ── */
 .backdrop {
@@ -717,7 +664,6 @@ input, select, button { font-family: var(--font); }
   animation: fadeBG .2s ease;
 }
 @keyframes fadeBG { from { opacity: 0; } to { opacity: 1; } }
-
 .sheet {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -727,7 +673,7 @@ input, select, button { font-family: var(--font); }
   padding-bottom: max(var(--sab), 12px);
   box-shadow: 0 -8px 40px rgba(0,0,0,.18);
   animation: sheetUp .28s cubic-bezier(.22,1,.36,1);
-  max-height: 85vh;
+  max-height: 88vh;
   overflow-y: auto;
 }
 @keyframes sheetUp {
@@ -760,7 +706,6 @@ input, select, button { font-family: var(--font); }
   transition: background .15s;
 }
 .sheet-reset:active { background: var(--blue-lt); }
-
 .sheet-body { padding: 4px 20px 8px; }
 .sh-lbl {
   font-size: .68rem;
@@ -770,8 +715,9 @@ input, select, button { font-family: var(--font); }
   color: var(--text3);
   margin-bottom: 10px;
 }
+.sh-lbl-gap { margin-top: 22px; }
 
-/* Period grid — 3 cols on mobile */
+/* Period pills — 3 cols */
 .pgrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -799,7 +745,8 @@ input, select, button { font-family: var(--font); }
   box-shadow: 0 2px 10px rgba(37,99,235,.3);
 }
 
-.area-sel {
+/* Sheet selects (Area + Sales Men) */
+.sheet-sel {
   width: 100%;
   padding: 13px 36px 13px 14px;
   border: 1.5px solid var(--border);
@@ -813,9 +760,10 @@ input, select, button { font-family: var(--font); }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
+  padding-right: 36px;
   transition: border .2s;
 }
-.area-sel:focus { border-color: var(--blue); }
+.sheet-sel:focus { border-color: var(--blue); }
 
 .sheet-foot { padding: 16px 20px 4px; }
 .btn-apply {
@@ -833,8 +781,7 @@ input, select, button { font-family: var(--font); }
 }
 .btn-apply:active { transform: scale(.98); }
 
-
-/* ── LOADER VEIL ── */
+/* ── LOADER ── */
 .veil {
   position: fixed;
   inset: 0;
@@ -867,18 +814,17 @@ input, select, button { font-family: var(--font); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-
 /* ══════════════════════════════════════
    TABLET  (≥ 600px)
 ══════════════════════════════════════ */
 @media (min-width: 600px) {
   .kpi-block, .search-block { max-width: 700px; margin-left: auto; margin-right: auto; }
-  .kpi-block  { padding: 18px 20px 0; }
-  .search-block { padding: 14px 20px 0; }
-  .card       { max-width: 700px; margin: 14px auto 0; }
-  .chips-row  { max-width: 700px; margin: 0 auto; padding: 12px 20px; }
-  .kpi-hero-val { font-size: 2rem; }
-  .chart-wrap { height: 230px; }
+  .kpi-block   { padding: 18px 20px 0; }
+  .search-block{ padding: 14px 20px 0; }
+  .card        { max-width: 700px; margin: 14px auto 0; }
+  .chips-row   { max-width: 700px; margin: 0 auto; padding: 12px 20px; }
+  .kpi-hero-val{ font-size: 2rem; }
+  .chart-wrap  { height: 230px; }
 }
 
 /* ══════════════════════════════════════
@@ -890,6 +836,5 @@ input, select, button { font-family: var(--font); }
   .kpi-block { grid-template-columns: 5fr 4fr; gap: 14px; padding-top: 22px; }
   .kpi-trio  { flex-direction: row; }
   .kpi-mini  { flex-direction: column; align-items: flex-start; padding: 14px 16px; }
-  .chart-wrap { height: 260px; }
-  .tbl td { white-space: nowrap; }
+  .chart-wrap{ height: 260px; }
 }

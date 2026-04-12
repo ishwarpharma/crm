@@ -46,7 +46,7 @@
         <svg class="fld-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
-        <input id="inp-un" type="text" placeholder="e.g. CADILA" autocomplete="username" autocapitalize="off" spellcheck="false"/>
+        <input id="inp-un" type="text" placeholder="Enter username" autocomplete="username" autocapitalize="off" spellcheck="false"/>
       </div>
     </div>
 
@@ -58,7 +58,7 @@
         </svg>
         <input id="inp-pw" type="password" placeholder="Password" autocomplete="current-password"/>
         <button class="eye-btn" onclick="togglePw()" type="button" tabindex="-1" aria-label="Toggle password">
-          <svg id="eye-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
@@ -180,9 +180,7 @@
       </div>
       <div class="tbl-wrap">
         <table class="tbl">
-          <thead>
-            <tr><th>#</th><th>Party Name</th><th>Sales</th></tr>
-          </thead>
+          <thead><tr><th>#</th><th>Party Name</th><th>Sales</th></tr></thead>
           <tbody id="pty-body"></tbody>
         </table>
       </div>
@@ -196,30 +194,33 @@
       </div>
       <div class="tbl-wrap">
         <table class="tbl">
-          <thead>
-            <tr><th>#</th><th>Item Name</th><th>Sales</th></tr>
-          </thead>
+          <thead><tr><th>#</th><th>Item Name</th><th>Sales</th></tr></thead>
           <tbody id="itm-body"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Bottom spacing (safe area) -->
+    <!-- Bottom safe area -->
     <div style="height:max(env(safe-area-inset-bottom,0px),24px)"></div>
 
   </div><!-- /body-scroll -->
 
 
-  <!-- ── FILTER BOTTOM SHEET ── -->
+  <!-- ══════════════════════════════════════
+       FILTER BOTTOM SHEET
+  ══════════════════════════════════════ -->
   <div class="backdrop hidden" id="backdrop" onclick="closeSheet()"></div>
   <div class="sheet hidden" id="sheet">
     <div class="sheet-pip"></div>
+
     <div class="sheet-hdr">
       <span class="sheet-title">Filters</span>
       <button class="sheet-reset" onclick="resetFilters()">Reset all</button>
     </div>
+
     <div class="sheet-body">
 
+      <!-- PERIOD -->
       <div class="sh-lbl">Period</div>
       <div class="pgrid" id="pgrid">
         <button class="pb active" data-p="all">All Time</button>
@@ -229,16 +230,24 @@
         <button class="pb" data-p="1y">Last 1 Year</button>
       </div>
 
-      <div class="sh-lbl" style="margin-top:22px">Area</div>
-      <select id="area-sel" class="area-sel">
+      <!-- AREA -->
+      <div class="sh-lbl sh-lbl-gap">Area</div>
+      <select id="area-sel" class="sheet-sel">
         <option value="">All Areas</option>
       </select>
 
-    </div>
+      <!-- SALES MEN -->
+      <div class="sh-lbl sh-lbl-gap">Sales Man</div>
+      <select id="sm-sel" class="sheet-sel">
+        <option value="">All Sales Men</option>
+      </select>
+
+    </div><!-- /sheet-body -->
+
     <div class="sheet-foot">
       <button class="btn-apply" onclick="applySheet()">Apply Filters</button>
     </div>
-  </div>
+  </div><!-- /sheet -->
 
 
   <!-- ── LOADING OVERLAY ── -->
@@ -251,8 +260,7 @@
 
 </div><!-- /app -->
 
-
-<!-- scripts: users.js MUST come before script.js -->
+<!-- users.js MUST be loaded before script.js -->
 <script src="users.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="script.js"></script>
