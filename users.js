@@ -68,7 +68,18 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
 
-  /* ── AKUMENTIS REP ── */
+/* ── ALKEM MAXX REP ── */
+  UMESH123: {
+    password:    'VANSH726',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
+   
+   
+   /* ── AKUMENTIS REP ── */
   ANUPTIWARE: {
     password:    '1111',
     displayName: 'Akumentis Team',
