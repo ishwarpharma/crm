@@ -187,7 +187,13 @@ KANCHAN: {
     salesmen:    ['1KANCHAN (MIS)'],
   },
 
-
+PAYAL: {
+    password:    'BHAVNA',
+    displayName: 'Payal',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1PAYAL (MIS), 1SACHI (MIS)'],
+  },
 
 
 
