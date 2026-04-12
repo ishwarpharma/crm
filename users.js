@@ -194,7 +194,7 @@ PAYAL: {
     areas:       null,
     salesmen:    ['1PAYAL (MIS)'],
   },
-
+  
 ARCHANA: {
     password:    '0822',
     displayName: 'Archana',
@@ -202,11 +202,6 @@ ARCHANA: {
     areas:       null,
     salesmen:    ['1ARCHANA (MIS)'],
   },
-
-   
-   
-   
-   
    
    /* ── EXAMPLE: Phone order taker — specific company + area ── */
   ORDER_DESK: {
