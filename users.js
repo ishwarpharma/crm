@@ -169,6 +169,18 @@ PRAJJWAL: {
     salesmen:    ['1SWAPNALI (MIS)'],
   },
    
+KANCHAN: {
+    password:    'KADWE123',
+    displayName: 'Kanchan',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1KANCHAN (MIS)'],
+  },
+
+
+
+
+
    
    
    
