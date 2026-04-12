@@ -94,16 +94,16 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
 
-
-   
-  /* ── CADILA — all Cadila companies, all areas, all salesmen ── */
-  CADILA: {
-    password:    'CADILA',
+ /* ── CADILA REP ── */
+  VINAYAK: {
+    password:    'VINAYAK03',
     displayName: 'Cadila Team',
-    companies:   ['CADILA', 'CADILA(NET)', 'CADILA(NUSAFE)', 'CADILA(VOLTA)'],
-    areas:       null,
-    salesmen:    null,
+    companies:   ['CADILA', 'CADILA(NET)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
   },
+   
+
 
   
   /* ── ALKEM ── */
