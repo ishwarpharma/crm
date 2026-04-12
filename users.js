@@ -68,8 +68,17 @@ const USERS = {
     salesmen:    null,   // all salesmen
   },
 
-  
-  /* ── ALKEM ── */
+  /* ── AKUMENTIS REP ── */
+  ANUPTIWARE: {
+    password:    '1111',
+    displayName: 'Akumentis Team',
+    companies:   ['AKUMENTIS', 'AKUMENTIS(NET)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+ 
+   
+   /* ── ALKEM ── */
   ALKEM: {
     password:    'ALKEM',
     displayName: 'Alkem Team',
