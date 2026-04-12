@@ -34,14 +34,24 @@ const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
   BAKAA: {
-    password:    'USHMA',
+    password:    'USHMAJITU',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
 
-/* ── KEMSYN REP ── */
+APURVA: {
+    password:    'USHMAJITU',
+    displayName: 'Administrator',
+    companies:   null,   // all companies
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
+ 
+   
+   /* ── KEMSYN REP ── */
   DEEPAKSD: {
     password:    'KEM@1234',
     displayName: 'Kemsyn Team',
