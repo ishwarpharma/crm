@@ -116,7 +116,15 @@ const USERS = {
     salesmen:    null,
   },
 
-  /* ── EXAMPLE: Field Salesman — sees only his own rows ── */
+ PRAVIN: {
+    password:    'PAWAR2551',
+    displayName: 'Thane Area Manager',
+    companies:   null,
+    areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR'],
+    salesmen:    null,
+  },
+     
+   /* ── EXAMPLE: Field Salesman — sees only his own rows ── */
   BRIJESH: {
     password:    'Brij@123',
     displayName: 'Brijesh',
