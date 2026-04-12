@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="theme-color" content="#0d1b3e"/>
+  <title>IshwarCRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="login-card">
+
+    <div class="login-brand">
+      <div class="brand-icon">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <rect width="12" height="12" rx="3" fill="#4f8ef7"/>
+          <rect x="16" width="12" height="12" rx="3" fill="#7ab3ff" opacity=".75"/>
+          <rect y="16" width="12" height="12" rx="3" fill="#7ab3ff" opacity=".75"/>
+          <rect x="16" y="16" width="12" height="12" rx="3" fill="#b3d4ff" opacity=".5"/>
+        </svg>
+      </div>
+      <span class="brand-name">IshwarCRM</span>
+    </div>
+
+    <h2 class="login-h">Welcome back</h2>
+    <p class="login-p">Sign in to explore your sales data</p>
+
+    <div class="fld">
+      <label class="fld-lbl">Username</label>
+      <div class="fld-wrap">
+        <svg class="fld-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <input id="inp-un" type="text" placeholder="e.g. CADILA" autocomplete="username" autocapitalize="off" spellcheck="false"/>
+      </div>
+    </div>
+
+    <div class="fld">
+      <label class="fld-lbl">Password</label>
+      <div class="fld-wrap">
+        <svg class="fld-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+        <input id="inp-pw" type="password" placeholder="Password" autocomplete="current-password"/>
+        <button class="eye-btn" onclick="togglePw()" type="button" tabindex="-1" aria-label="Toggle password">
+          <svg id="eye-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="login-err" class="login-err hidden">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
+      </svg>
+      Incorrect username or password
+    </div>
+
+    <button class="btn-login" onclick="attemptLogin()">Sign In →</button>
+    <div class="demo-hint">Demo — username: <b>CADILA</b> &nbsp;·&nbsp; password: <b>CADILA</b></div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     DASHBOARD APP
+══════════════════════════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- ── STICKY HEADER ── -->
+  <header class="hdr">
+    <div class="hdr-l">
+      <div class="hdr-logo">
+        <svg width="16" height="16" viewBox="0 0 28 28" fill="none">
+          <rect width="12" height="12" rx="3" fill="#4f8ef7"/>
+          <rect x="16" width="12" height="12" rx="3" fill="#7ab3ff" opacity=".75"/>
+          <rect y="16" width="12" height="12" rx="3" fill="#7ab3ff" opacity=".75"/>
+          <rect x="16" y="16" width="12" height="12" rx="3" fill="#b3d4ff" opacity=".5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="hdr-title">IshwarCRM</div>
+        <div class="hdr-co" id="hdr-co">—</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <button class="hdr-filter-btn" onclick="openSheet()" aria-label="Open filters">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        </svg>
+        Filters
+        <span class="fbadge hidden" id="fbadge"></span>
+      </button>
+      <button class="hdr-av" id="hdr-av" onclick="logout()" title="Sign out">U</button>
+    </div>
+  </header>
+
+  <!-- ── MAIN SCROLL AREA ── -->
+  <div class="body-scroll" id="body-scroll">
+
+    <!-- Active filter chips -->
+    <div class="chips-row hidden" id="chips-row"></div>
+
+    <!-- KPI Block -->
+    <div class="kpi-block">
+      <div class="kpi-hero">
+        <div class="kpi-hero-lbl">Total Sales</div>
+        <div class="kpi-hero-val" id="k-sales">—</div>
+        <div class="kpi-hero-sub" id="k-sales-sub"></div>
+      </div>
+      <div class="kpi-trio">
+        <div class="kpi-mini">
+          <div class="kpi-mini-val" id="k-parties">—</div>
+          <div class="kpi-mini-lbl">Parties</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-val" id="k-items">—</div>
+          <div class="kpi-mini-lbl">Items</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-val" id="k-bills">—</div>
+          <div class="kpi-mini-lbl">Bills</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bars -->
+    <div class="search-block">
+      <div class="sbox" id="sbox-party">
+        <span class="sbox-icon">🏢</span>
+        <input type="text" id="party-inp" class="sinp" placeholder="Search party…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onPartyInput()" onfocus="showPartyDrop()"/>
+        <button class="sclr hidden" id="party-clr" onclick="clearParty()" aria-label="Clear party">✕</button>
+        <div class="sdrop hidden" id="party-drop"></div>
+      </div>
+      <div class="sbox" id="sbox-item">
+        <span class="sbox-icon">💊</span>
+        <input type="text" id="item-inp" class="sinp" placeholder="Search item…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onItemInput()" onfocus="showItemDrop()"/>
+        <button class="sclr hidden" id="item-clr" onclick="clearItem()" aria-label="Clear item">✕</button>
+        <div class="sdrop hidden" id="item-drop"></div>
+      </div>
+    </div>
+
+    <!-- Chart Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="chart-ttl">Monthly Trend</div>
+        <div class="card-tag" id="chart-tag"></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Party Table Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="pty-ttl">Party Sales</div>
+        <div class="card-tag" id="pty-cnt"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>#</th><th>Party Name</th><th>Sales</th></tr>
+          </thead>
+          <tbody id="pty-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Item Table Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="itm-ttl">Item Sales</div>
+        <div class="card-tag" id="itm-cnt"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>#</th><th>Item Name</th><th>Sales</th></tr>
+          </thead>
+          <tbody id="itm-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bottom spacing (safe area) -->
+    <div style="height:max(env(safe-area-inset-bottom,0px),24px)"></div>
+
+  </div><!-- /body-scroll -->
+
+
+  <!-- ── FILTER BOTTOM SHEET ── -->
+  <div class="backdrop hidden" id="backdrop" onclick="closeSheet()"></div>
+  <div class="sheet hidden" id="sheet">
+    <div class="sheet-pip"></div>
+    <div class="sheet-hdr">
+      <span class="sheet-title">Filters</span>
+      <button class="sheet-reset" onclick="resetFilters()">Reset all</button>
+    </div>
+    <div class="sheet-body">
+
+      <div class="sh-lbl">Period</div>
+      <div class="pgrid" id="pgrid">
+        <button class="pb active" data-p="all">All Time</button>
+        <button class="pb" data-p="1m">This Month</button>
+        <button class="pb" data-p="3m">Last 3M</button>
+        <button class="pb" data-p="6m">Last 6M</button>
+        <button class="pb" data-p="1y">Last 1 Year</button>
+      </div>
+
+      <div class="sh-lbl" style="margin-top:22px">Area</div>
+      <select id="area-sel" class="area-sel">
+        <option value="">All Areas</option>
+      </select>
+
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-apply" onclick="applySheet()">Apply Filters</button>
+    </div>
+  </div>
+
+
+  <!-- ── LOADING OVERLAY ── -->
+  <div class="veil" id="veil">
+    <div class="veil-pill">
+      <div class="ring"></div>
+      <span>Loading data…</span>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+
+<!-- scripts: users.js MUST come before script.js -->
+<script src="users.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
