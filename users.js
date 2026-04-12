@@ -142,7 +142,13 @@ const USERS = {
     salesmen:    ['1GANESH (MIS)'],
   },
    
-   
+    SWAPNALI: {
+    password:    'KANU123',
+    displayName: 'Swapnali',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1SWAPNALI (MIS)'],
+  },
    
    
    
