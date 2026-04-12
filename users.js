@@ -125,7 +125,23 @@ const USERS = {
     salesmen:    ['BRIJESH (MIS)'],
   },
 
-  /* ── EXAMPLE: Phone order taker — specific company + area ── */
+  /* ── GANESH: Field Salesman — sees only his own rows ── */
+  GANESH: {
+    password:    '1288',
+    displayName: 'Ganesh',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1GANESH (MIS)'],
+  },
+   
+   
+   
+   
+   
+   
+   
+   
+   /* ── EXAMPLE: Phone order taker — specific company + area ── */
   ORDER_DESK: {
     password:    'Order@123',
     displayName: 'Order Desk',
