@@ -192,7 +192,7 @@ PAYAL: {
     displayName: 'Payal',
     companies:   null,
     areas:       null,
-    salesmen:    ['1PAYAL (MIS), 1SACHI (MIS)'],
+    salesmen:    ['1PAYAL (MIS)'],
   },
 
 ARCHANA: {
@@ -200,7 +200,7 @@ ARCHANA: {
     displayName: 'Archana',
     companies:   null,
     areas:       null,
-    salesmen:    ['1ARCHANA (MIS), 1SWATI (MIS)'],
+    salesmen:    ['1ARCHANA (MIS)'],
   },
 
    
