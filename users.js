@@ -77,14 +77,25 @@
 const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
-  ADMIN: {
-    password:    'Admin@9999',
+  BAKAA: {
+    password:    'USHMA',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
 
+/* ── KEMSYN REP ── */
+  DEEPAKSD: {
+    password:    'KEM@1234',
+    displayName: 'Kemsyn Team',
+    companies:   ['KEMSYN'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+
+
+   
   /* ── CADILA — all Cadila companies, all areas, all salesmen ── */
   CADILA: {
     password:    'CADILA',
@@ -94,51 +105,7 @@ const USERS = {
     salesmen:    null,
   },
 
-  /* ── INTAS — all Intas companies ── */
-  INTAS: {
-    password:    'INTAS',
-    displayName: 'Intas Team',
-    companies:   ['INTAS', 'INTAS(NET)', 'SKYMAP (INTAS)'],
-    areas:       null,
-    salesmen:    null,
-  },
-
-  /* ── ABBOTT ── */
-  ABBOTT: {
-    password:    'ABBOTT',
-    displayName: 'Abbott Team',
-    companies:   ['ABBOTT'],
-    areas:       null,
-    salesmen:    null,
-  },
-
-  /* ── ELDER ── */
-  ELDER: {
-    password:    'ELDER',
-    displayName: 'Elder Team',
-    companies:   ['ELDER', 'ELDER PROJECT'],
-    areas:       null,
-    salesmen:    null,
-  },
-
-  /* ── EMCURE ── */
-  EMCURE: {
-    password:    'EMCURE',
-    displayName: 'Emcure Team',
-    companies:   ['EMCURE', 'EMCURE(XION)'],
-    areas:       null,
-    salesmen:    null,
-  },
-
-  /* ── ZYDUS ── */
-  ZYDUS: {
-    password:    'ZYDUS',
-    displayName: 'Zydus Team',
-    companies:   ['ZYDUS'],
-    areas:       null,
-    salesmen:    null,
-  },
-
+  
   /* ── ALKEM ── */
   ALKEM: {
     password:    'ALKEM',
