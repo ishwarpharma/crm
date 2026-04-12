@@ -60,6 +60,16 @@ SAPURVA: {
     salesmen:    null,   // all salesmen
   },
 
+YOGESH: {
+    password:    'SWAMI8989',
+    displayName: 'Kemsyn Team',
+    companies:   ['KEMSYN'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+
+
+   
  /* ── CADILA REP ── */
   VINAYAK: {
     password:    'VINAYAK03',
