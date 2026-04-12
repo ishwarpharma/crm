@@ -195,7 +195,13 @@ PAYAL: {
     salesmen:    ['1PAYAL (MIS), 1SACHI (MIS)'],
   },
 
-
+ARCHANA: {
+    password:    '0822',
+    displayName: 'Archana',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1ARCHANA (MIS), 1SWATI (MIS)'],
+  },
 
    
    
