@@ -200,7 +200,7 @@ ARCHANA: {
     displayName: 'Archana',
     companies:   null,
     areas:       null,
-    salesmen:    ['1ARCHANA (MIS)'],
+    salesmen:    ['1ARCHANA (MIS)', '1SWATI (MIS)'],
   },
    
    /* ── EXAMPLE: Phone order taker — specific company + area ── */
