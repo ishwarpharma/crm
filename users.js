@@ -179,7 +179,17 @@ PRAJJWAL: {
     salesmen:    ['1SWAPNALI (MIS)'],
   },
    
-KANCHAN: {
+ KRANTI: {
+    password:    '4042',
+    displayName: 'Kranti',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1KRANTI (MIS)'],
+  },
+   
+   
+   
+   KANCHAN: {
     password:    'KADWE123',
     displayName: 'Kanchan',
     companies:   null,
