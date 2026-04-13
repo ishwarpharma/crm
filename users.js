@@ -79,7 +79,17 @@ YOGESH: {
     salesmen:    null,   // all salesmen
   },
    
- /* ── ALKEM HC REP ── */
+ /* ── CSC REP ── */
+  DIPESH: {
+    password:    'MAULI8600',
+    displayName: 'CSC Team',
+    companies:   ['CSC'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
+   
+   /* ── ALKEM HC REP ── */
   ROSHAN: {
     password:    '1806',
     displayName: 'Alkem Team',
