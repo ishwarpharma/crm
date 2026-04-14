@@ -220,9 +220,17 @@ ARCHANA: {
     displayName: 'Archana',
     companies:   null,
     areas:       null,
-    salesmen:    ['1ARCHANA (MIS)', '1SWATI (MIS)'],
-  },
+    salesmen:    ['1ARCHANA (MIS)', '1SWATI (MIS)'], 
+     },
    
+ KHETU: {
+    password:    '7788',
+    displayName: 'Narendra',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1NARENDRA (MIS)'],
+  },
+      
    /* ── EXAMPLE: Phone order taker — specific company + area ── */
   ORDER_DESK: {
     password:    'Order@123',
