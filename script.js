@@ -11,6 +11,8 @@ let chart       = null; // Chart.js instance
 
 /* Dashboard filter state */
 let selPeriod = 'all';
+let selCo1    = '';     // Company filter 1
+let selCo2    = '';     // Company filter 2 (optional)
 let selArea   = '';
 let selSM     = '';     // selected Sales Man (filter panel)
 let selParty  = '';
@@ -69,7 +71,7 @@ document.addEventListener('keydown', e => {
 function logout() {
   currentUser = null;
   allData     = [];
-  selPeriod = 'all'; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
 
   if (chart) { chart.destroy(); chart = null; }
 
@@ -79,6 +81,8 @@ function logout() {
 
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="all"]').classList.add('active');
+  document.getElementById('co1-sel').value  = '';
+  document.getElementById('co2-sel').value  = '';
   document.getElementById('area-sel').value = '';
   document.getElementById('sm-sel').value   = '';
 
@@ -208,9 +212,26 @@ function parseDate(s) {
 
 
 /* ══════════════════════════════════════
-   DROPDOWN INIT (Area + Sales Men)
+   DROPDOWN INIT (Company + Area + Sales Men)
 ══════════════════════════════════════ */
 function initDropdowns() {
+  /* Companies — from visible data only */
+  const coList = [...new Set(
+    allData.map(r => r.co).filter(c => c && c !== 'Company Name')
+  )].sort();
+
+  const co1Sel = document.getElementById('co1-sel');
+  const co2Sel = document.getElementById('co2-sel');
+  co1Sel.innerHTML = '<option value="">All Companies</option>';
+  co2Sel.innerHTML = '<option value="">— None —</option>';
+  coList.forEach(c => {
+    [co1Sel, co2Sel].forEach(sel => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+  });
+
   /* Area */
   const areas = [...new Set(
     allData.map(r => r.area).filter(a =>
@@ -257,15 +278,20 @@ document.getElementById('pgrid').addEventListener('click', e => {
 function applyPeriod(rows) {
   if (selPeriod === 'all') return rows;
   const now = new Date();
-  let cut;
-  if (selPeriod === '1m') {
+  let cut, cutEnd;
+  if (selPeriod === '3d') {
+    cut = new Date(now); cut.setDate(cut.getDate() - 3);
+  } else if (selPeriod === '1m') {
     cut = new Date(now.getFullYear(), now.getMonth(), 1);
   } else if (selPeriod === '3m') {
     cut = new Date(now); cut.setMonth(cut.getMonth() - 3);
   } else if (selPeriod === '6m') {
     cut = new Date(now); cut.setMonth(cut.getMonth() - 6);
-  } else if (selPeriod === '1y') {
-    cut = new Date(now); cut.setFullYear(cut.getFullYear() - 1);
+  } else if (selPeriod === 'fy2526') {
+    // Indian FY: 1 Apr 2025 – 31 Mar 2026
+    cut    = new Date(2025, 3, 1);   // 1 Apr 2025
+    cutEnd = new Date(2026, 2, 31);  // 31 Mar 2026
+    return rows.filter(r => r.date && r.date >= cut && r.date <= cutEnd);
   }
   return rows.filter(r => r.date && r.date >= cut);
 }
@@ -285,15 +311,19 @@ function closeSheet() {
   document.body.style.overflow = '';
 }
 function applySheet() {
+  selCo1  = document.getElementById('co1-sel').value;
+  selCo2  = document.getElementById('co2-sel').value;
   selArea = document.getElementById('area-sel').value;
   selSM   = document.getElementById('sm-sel').value;
   closeSheet();
   renderAll();
 }
 function resetFilters() {
-  selPeriod = 'all'; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="all"]').classList.add('active');
+  document.getElementById('co1-sel').value  = '';
+  document.getElementById('co2-sel').value  = '';
   document.getElementById('area-sel').value = '';
   document.getElementById('sm-sel').value   = '';
   clearParty(false);
@@ -309,6 +339,8 @@ function resetFilters() {
 function updateBadge() {
   let n = 0;
   if (selPeriod !== 'all') n++;
+  if (selCo1)    n++;
+  if (selCo2)    n++;
   if (selArea)   n++;
   if (selSM)     n++;
   if (selParty)  n++;
@@ -323,35 +355,31 @@ function updateChips() {
   row.innerHTML = '';
 
   const addChip = (label, onRemove) => {
-    const c  = document.createElement('div');
-    c.className = 'chip';
-    const lbl = document.createElement('span');
-    lbl.textContent = label;
-    const x = document.createElement('button');
-    x.className = 'chip-x';
-    x.textContent = '✕';
+    const c  = document.createElement('div'); c.className = 'chip';
+    const lbl = document.createElement('span'); lbl.textContent = label;
+    const x  = document.createElement('button'); x.className = 'chip-x'; x.textContent = '✕';
     x.setAttribute('aria-label', 'Remove ' + label);
     x.addEventListener('click', onRemove);
-    c.appendChild(lbl);
-    c.appendChild(x);
-    row.appendChild(c);
+    c.appendChild(lbl); c.appendChild(x); row.appendChild(c);
   };
 
-  if (selParty) addChip('Party: '  + truncate(selParty, 22), () => clearParty(true));
-  if (selItem)  addChip('Item: '   + truncate(selItem, 22),  () => clearItem(true));
-  if (selSM)    addChip('SM: '     + truncate(selSM, 22),    () => {
-    selSM = '';
-    document.getElementById('sm-sel').value = '';
-    renderAll();
+  if (selParty) addChip('Party: '   + truncate(selParty, 22), () => clearParty(true));
+  if (selItem)  addChip('Item: '    + truncate(selItem,  22), () => clearItem(true));
+  if (selCo1)   addChip('Co: '      + truncate(selCo1,  20), () => {
+    selCo1 = ''; document.getElementById('co1-sel').value = ''; renderAll();
   });
-  if (selArea)  addChip('Area: '   + selArea, () => {
-    selArea = '';
-    document.getElementById('area-sel').value = '';
-    renderAll();
+  if (selCo2)   addChip('Co2: '     + truncate(selCo2,  20), () => {
+    selCo2 = ''; document.getElementById('co2-sel').value = ''; renderAll();
+  });
+  if (selSM)    addChip('SM: '      + truncate(selSM,   22), () => {
+    selSM = ''; document.getElementById('sm-sel').value = ''; renderAll();
+  });
+  if (selArea)  addChip('Area: '    + selArea, () => {
+    selArea = ''; document.getElementById('area-sel').value = ''; renderAll();
   });
   if (selPeriod !== 'all') {
-    const labels = { '1m': 'This Month', '3m': 'Last 3M', '6m': 'Last 6M', '1y': 'Last 1Y' };
-    addChip(labels[selPeriod], () => {
+    const labels = { '3d': 'Last 3 Days', '1m': 'This Month', '3m': 'Last 3M', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
+    addChip(labels[selPeriod] || selPeriod, () => {
       selPeriod = 'all';
       document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
       document.querySelector('.pb[data-p="all"]').classList.add('active');
@@ -368,6 +396,9 @@ function updateChips() {
 ══════════════════════════════════════ */
 function getFiltered() {
   let d = applyPeriod(allData);
+  // Company filter: if co1 set, show co1 (and co2 if also set)
+  if (selCo1 && selCo2) d = d.filter(r => r.co === selCo1 || r.co === selCo2);
+  else if (selCo1)      d = d.filter(r => r.co === selCo1);
   if (selArea)  d = d.filter(r => r.area  === selArea);
   if (selSM)    d = d.filter(r => r.sm    === selSM);
   if (selParty) d = d.filter(r => r.party === selParty);
@@ -520,23 +551,43 @@ function groupBy(data, key) {
 }
 
 function renderTables(data) {
-  /* Party table context */
+  /* Party table */
   const pRows = groupBy(data, 'party');
   let pTitle = 'Party Sales';
-  if (selItem)  pTitle = 'Parties — ' + truncate(selItem, 20);
+  if (selItem)       pTitle = 'Parties — ' + truncate(selItem, 20);
   else if (selParty) pTitle = truncate(selParty, 26);
   document.getElementById('pty-ttl').textContent = pTitle;
   document.getElementById('pty-cnt').textContent = pRows.length + ' parties';
   fillTable('pty-body', pRows, 'party');
 
-  /* Item table context */
+  /* Item table */
   const iRows = groupBy(data, 'item');
   let iTitle = 'Item Sales';
-  if (selParty) iTitle = 'Items — ' + truncate(selParty, 20);
+  if (selParty)     iTitle = 'Items — ' + truncate(selParty, 20);
   else if (selItem) iTitle = truncate(selItem, 26);
   document.getElementById('itm-ttl').textContent = iTitle;
   document.getElementById('itm-cnt').textContent = iRows.length + ' items';
   fillTable('itm-body', iRows, 'item');
+
+  /* Company table */
+  const coRows = groupBy(data, 'co');
+  document.getElementById('co-ttl').textContent = 'Company Sales';
+  document.getElementById('co-cnt').textContent = coRows.length + ' companies';
+  fillTableSimple('co-body', coRows);
+
+  /* Area table */
+  const aRows = groupBy(data, 'area');
+  document.getElementById('area-ttl').textContent = 'Area Sales';
+  document.getElementById('area-cnt').textContent = aRows.length + ' areas';
+  fillTableSimple('area-body', aRows);
+
+  /* Sales Men table */
+  const smRows = groupBy(data, 'sm').filter(r =>
+    r.name && !r.name.toUpperCase().startsWith('X') && !r.name.includes('SUSPENCE')
+  );
+  document.getElementById('sm-ttl').textContent = 'Sales Men';
+  document.getElementById('sm-cnt').textContent = smRows.length + ' salesmen';
+  fillTableSimple('sm-body', smRows);
 }
 
 function fillTable(tbodyId, rows, type) {
@@ -563,6 +614,26 @@ function fillTable(tbodyId, rows, type) {
     tr.addEventListener('click', () => {
       type === 'party' ? setParty(row.name) : setItem(row.name);
     });
+    tbody.appendChild(tr);
+  });
+}
+
+
+/* Simple table — no click drill, just display */
+function fillTableSimple(tbodyId, rows) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  if (!rows.length) {
+    tbody.innerHTML =
+      '<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--text3);font-size:.8rem;">No data</td></tr>';
+    return;
+  }
+  rows.forEach((row, i) => {
+    const tr  = document.createElement('tr');
+    const td0 = document.createElement('td'); td0.textContent = i + 1;
+    const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
+    const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
+    tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
     tbody.appendChild(tr);
   });
 }
@@ -696,6 +767,8 @@ document.getElementById('item-inp').addEventListener('blur', () => {
    Used to populate search dropdowns */
 function getBase() {
   let d = applyPeriod(allData);
+  if (selCo1 && selCo2) d = d.filter(r => r.co === selCo1 || r.co === selCo2);
+  else if (selCo1)      d = d.filter(r => r.co === selCo1);
   if (selArea) d = d.filter(r => r.area === selArea);
   if (selSM)   d = d.filter(r => r.sm   === selSM);
   return d;

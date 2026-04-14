@@ -7,20 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="theme-color" content="#0d1b3e"/>
-  <meta name="msapplication-TileColor" content="#0d1b3e"/>
-  <meta name="msapplication-config" content="browserconfig.xml"/>
   <title>IshwarCRM</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
-  <link rel="manifest" href="site.webmanifest"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
-  
 <body>
 
 <!-- ══════════════════════════════════════
@@ -208,6 +200,48 @@
       </div>
     </div>
 
+    <!-- Company Table Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="co-ttl">Company Sales</div>
+        <div class="card-tag" id="co-cnt"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Company Name</th><th>Sales</th></tr></thead>
+          <tbody id="co-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Area Table Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="area-ttl">Area Sales</div>
+        <div class="card-tag" id="area-cnt"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Area Name</th><th>Sales</th></tr></thead>
+          <tbody id="area-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sales Men Table Card -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl" id="sm-ttl">Sales Men</div>
+        <div class="card-tag" id="sm-cnt"></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Sales Man</th><th>Sales</th></tr></thead>
+          <tbody id="sm-body"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- Bottom safe area -->
     <div style="height:max(env(safe-area-inset-bottom,0px),24px)"></div>
 
@@ -232,11 +266,24 @@
       <div class="sh-lbl">Period</div>
       <div class="pgrid" id="pgrid">
         <button class="pb active" data-p="all">All Time</button>
+        <button class="pb" data-p="3d">Last 3 Days</button>
         <button class="pb" data-p="1m">This Month</button>
         <button class="pb" data-p="3m">Last 3M</button>
         <button class="pb" data-p="6m">Last 6M</button>
-        <button class="pb" data-p="1y">Last 1 Year</button>
+        <button class="pb" data-p="fy2526">FY 25-26</button>
       </div>
+
+      <!-- COMPANY 1 -->
+      <div class="sh-lbl sh-lbl-gap">Company 1</div>
+      <select id="co1-sel" class="sheet-sel">
+        <option value="">All Companies</option>
+      </select>
+
+      <!-- COMPANY 2 -->
+      <div class="sh-lbl sh-lbl-gap">Company 2 <span class="sh-lbl-opt">(optional)</span></div>
+      <select id="co2-sel" class="sheet-sel">
+        <option value="">— None —</option>
+      </select>
 
       <!-- AREA -->
       <div class="sh-lbl sh-lbl-gap">Area</div>
