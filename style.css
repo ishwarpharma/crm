@@ -754,25 +754,18 @@ input, select, button { font-family: var(--font); }
   box-shadow: 0 2px 10px rgba(37,99,235,.3);
 }
 
-/* Sheet selects (Area + Sales Men) */
-.sheet-sel {
-  width: 100%;
-  padding: 13px 36px 13px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: .875rem;
-  color: var(--text);
+/* Sheet search boxes — same as .sbox but no outer card shadow */
+.sheet-sbox {
   background: #f8fafc;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-  transition: border .2s;
+  box-shadow: none;
+  border-color: var(--border);
 }
-.sheet-sel:focus { border-color: var(--blue); }
+.sheet-sbox:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  background: #fff;
+}
+.sheet-sbox .sdrop { z-index: 400; }
 
 .sheet-foot { padding: 16px 20px 4px; }
 .btn-apply {
