@@ -723,6 +723,15 @@ input, select, button { font-family: var(--font); }
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
+/* optional label suffix */
+.sh-lbl-opt {
+  font-size: .6rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text3);
+  margin-left: 3px;
+}
 .pb {
   padding: 11px 8px;
   border: 1.5px solid var(--border);
