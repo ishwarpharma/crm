@@ -10,7 +10,7 @@ let currentUser = null; // logged-in user object from USERS
 let chart       = null; // Chart.js instance
 
 /* Dashboard filter state */
-let selPeriod = 'all';
+let selPeriod = '1m';
 let selCo1    = '';     // Company filter 1
 let selCo2    = '';     // Company filter 2 (optional)
 let selArea   = '';
@@ -71,7 +71,7 @@ document.addEventListener('keydown', e => {
 function logout() {
   currentUser = null;
   allData     = [];
-  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
 
   if (chart) { chart.destroy(); chart = null; }
 
@@ -80,7 +80,7 @@ function logout() {
   document.getElementById('login-err').classList.add('hidden');
 
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pb[data-p="all"]').classList.add('active');
+  document.querySelector('.pb[data-p="1m"]').classList.add('active');
   ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
 
   clearParty(false);
@@ -257,25 +257,37 @@ function applyPeriod(rows) {
   if (selPeriod === 'all') return rows;
   const now = new Date();
   let cut, cutEnd;
-  if (selPeriod === '3d') {
-    // Today minus 1, 2, 3 — i.e. yesterday + day before + day before that
-    // cutEnd = end of yesterday,  cut = start of 3 days ago
-    cutEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // midnight today (= end of yesterday)
-    cut    = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3); // start of 3 days ago
+
+  if (selPeriod === '1m') {
+    // This Month: 1st of current month → today (inclusive)
+    cut    = new Date(now.getFullYear(), now.getMonth(), 1);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // midnight tomorrow = includes today
     return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
-  } else if (selPeriod === '1m') {
-    cut = new Date(now.getFullYear(), now.getMonth(), 1);
-  } else if (selPeriod === '3m') {
-    cut = new Date(now); cut.setMonth(cut.getMonth() - 3);
+
+  } else if (selPeriod === 'lm') {
+    // Last Month: 1st → last day of previous month
+    cut    = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), 1); // midnight 1st of this month = end of last month
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
+
+  } else if (selPeriod === '3d') {
+    // Last 3 Days: yesterday, day before, day before that (exclude today)
+    cut    = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
+
   } else if (selPeriod === '6m') {
     cut = new Date(now); cut.setMonth(cut.getMonth() - 6);
+    return rows.filter(r => r.date && r.date >= cut);
+
   } else if (selPeriod === 'fy2526') {
     // Indian FY: 1 Apr 2025 – 31 Mar 2026
-    cut    = new Date(2025, 3, 1);   // 1 Apr 2025
-    cutEnd = new Date(2026, 2, 31);  // 31 Mar 2026
-    return rows.filter(r => r.date && r.date >= cut && r.date <= cutEnd);
+    cut    = new Date(2025, 3, 1);
+    cutEnd = new Date(2026, 3, 1); // midnight 1 Apr 2026 = includes 31 Mar 2026
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
   }
-  return rows.filter(r => r.date && r.date >= cut);
+
+  return rows;
 }
 
 
@@ -301,9 +313,9 @@ function applySheet() {
   renderAll();
 }
 function resetFilters() {
-  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pb[data-p="all"]').classList.add('active');
+  document.querySelector('.pb[data-p="1m"]').classList.add('active');
   ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
   clearParty(false);
   clearItem(false);
@@ -389,7 +401,7 @@ function clearSheetFilter(key, doFocus = true) {
 ══════════════════════════════════════ */
 function updateBadge() {
   let n = 0;
-  if (selPeriod !== 'all') n++;
+  if (selPeriod !== '1m') n++;   // 1m = This Month = default, don't count it
   if (selCo1)    n++;
   if (selCo2)    n++;
   if (selArea)   n++;
@@ -428,12 +440,12 @@ function updateChips() {
   if (selArea)  addChip('Area: '    + selArea, () => {
     selArea = ''; document.getElementById('area-sel').value = ''; renderAll();
   });
-  if (selPeriod !== 'all') {
-    const labels = { '3d': 'Last 3 Days', '1m': 'This Month', '3m': 'Last 3M', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
+  if (selPeriod !== '1m') {
+    const labels = { 'all': 'All Time', 'lm': 'Last Month', '3d': 'Last 3 Days', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
     addChip(labels[selPeriod] || selPeriod, () => {
-      selPeriod = 'all';
+      selPeriod = '1m';
       document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-      document.querySelector('.pb[data-p="all"]').classList.add('active');
+      document.querySelector('.pb[data-p="1m"]').classList.add('active');
       renderAll();
     });
   }
