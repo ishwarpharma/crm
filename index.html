@@ -265,37 +265,57 @@
       <!-- PERIOD -->
       <div class="sh-lbl">Period</div>
       <div class="pgrid" id="pgrid">
-        <button class="pb active" data-p="all">All Time</button>
+        <button class="pb active" data-p="1m">This Month</button>
+        <button class="pb" data-p="lm">Last Month</button>
         <button class="pb" data-p="3d">Last 3 Days</button>
-        <button class="pb" data-p="1m">This Month</button>
-        <button class="pb" data-p="3m">Last 3M</button>
         <button class="pb" data-p="6m">Last 6M</button>
         <button class="pb" data-p="fy2526">FY 25-26</button>
+        <button class="pb" data-p="all">All Time</button>
       </div>
 
       <!-- COMPANY 1 -->
       <div class="sh-lbl sh-lbl-gap">Company 1</div>
-      <select id="co1-sel" class="sheet-sel">
-        <option value="">All Companies</option>
-      </select>
+      <div class="sbox sheet-sbox" id="sbox-co1">
+        <span class="sbox-icon">🏭</span>
+        <input type="text" id="co1-inp" class="sinp" placeholder="Search company…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onSheetSearch('co1')" onfocus="onSheetSearch('co1')"/>
+        <button class="sclr hidden" id="co1-clr" onclick="clearSheetFilter('co1')" aria-label="Clear">✕</button>
+        <div class="sdrop hidden" id="co1-drop"></div>
+      </div>
 
       <!-- COMPANY 2 -->
       <div class="sh-lbl sh-lbl-gap">Company 2 <span class="sh-lbl-opt">(optional)</span></div>
-      <select id="co2-sel" class="sheet-sel">
-        <option value="">— None —</option>
-      </select>
+      <div class="sbox sheet-sbox" id="sbox-co2">
+        <span class="sbox-icon">🏭</span>
+        <input type="text" id="co2-inp" class="sinp" placeholder="Search company…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onSheetSearch('co2')" onfocus="onSheetSearch('co2')"/>
+        <button class="sclr hidden" id="co2-clr" onclick="clearSheetFilter('co2')" aria-label="Clear">✕</button>
+        <div class="sdrop hidden" id="co2-drop"></div>
+      </div>
 
       <!-- AREA -->
       <div class="sh-lbl sh-lbl-gap">Area</div>
-      <select id="area-sel" class="sheet-sel">
-        <option value="">All Areas</option>
-      </select>
+      <div class="sbox sheet-sbox" id="sbox-area">
+        <span class="sbox-icon">📍</span>
+        <input type="text" id="area-inp" class="sinp" placeholder="Search area…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onSheetSearch('area')" onfocus="onSheetSearch('area')"/>
+        <button class="sclr hidden" id="area-clr" onclick="clearSheetFilter('area')" aria-label="Clear">✕</button>
+        <div class="sdrop hidden" id="area-drop"></div>
+      </div>
 
       <!-- SALES MEN -->
       <div class="sh-lbl sh-lbl-gap">Sales Man</div>
-      <select id="sm-sel" class="sheet-sel">
-        <option value="">All Sales Men</option>
-      </select>
+      <div class="sbox sheet-sbox" id="sbox-sm">
+        <span class="sbox-icon">👤</span>
+        <input type="text" id="sm-inp" class="sinp" placeholder="Search salesman…"
+               autocomplete="off" autocorrect="off" spellcheck="false"
+               oninput="onSheetSearch('sm')" onfocus="onSheetSearch('sm')"/>
+        <button class="sclr hidden" id="sm-clr" onclick="clearSheetFilter('sm')" aria-label="Clear">✕</button>
+        <div class="sdrop hidden" id="sm-drop"></div>
+      </div>
 
     </div><!-- /sheet-body -->
 

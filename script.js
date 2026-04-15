@@ -10,7 +10,7 @@ let currentUser = null; // logged-in user object from USERS
 let chart       = null; // Chart.js instance
 
 /* Dashboard filter state */
-let selPeriod = 'all';
+let selPeriod = '1m';
 let selCo1    = '';     // Company filter 1
 let selCo2    = '';     // Company filter 2 (optional)
 let selArea   = '';
@@ -71,7 +71,7 @@ document.addEventListener('keydown', e => {
 function logout() {
   currentUser = null;
   allData     = [];
-  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
 
   if (chart) { chart.destroy(); chart = null; }
 
@@ -80,11 +80,8 @@ function logout() {
   document.getElementById('login-err').classList.add('hidden');
 
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pb[data-p="all"]').classList.add('active');
-  document.getElementById('co1-sel').value  = '';
-  document.getElementById('co2-sel').value  = '';
-  document.getElementById('area-sel').value = '';
-  document.getElementById('sm-sel').value   = '';
+  document.querySelector('.pb[data-p="1m"]').classList.add('active');
+  ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
 
   clearParty(false);
   clearItem(false);
@@ -212,55 +209,36 @@ function parseDate(s) {
 
 
 /* ══════════════════════════════════════
-   DROPDOWN INIT (Company + Area + Sales Men)
+   SHEET SEARCH DATA — master lists
+══════════════════════════════════════ */
+let listCo   = [];   // all company names visible to user
+let listArea = [];   // all areas
+let listSM   = [];   // all salesmen
+
+/* ══════════════════════════════════════
+   DROPDOWN INIT
 ══════════════════════════════════════ */
 function initDropdowns() {
-  /* Companies — from visible data only */
-  const coList = [...new Set(
+  /* Companies */
+  listCo = [...new Set(
     allData.map(r => r.co).filter(c => c && c !== 'Company Name')
   )].sort();
 
-  const co1Sel = document.getElementById('co1-sel');
-  const co2Sel = document.getElementById('co2-sel');
-  co1Sel.innerHTML = '<option value="">All Companies</option>';
-  co2Sel.innerHTML = '<option value="">— None —</option>';
-  coList.forEach(c => {
-    [co1Sel, co2Sel].forEach(sel => {
-      const o = document.createElement('option');
-      o.value = c; o.textContent = c;
-      sel.appendChild(o);
-    });
-  });
-
-  /* Area */
-  const areas = [...new Set(
+  /* Areas */
+  listArea = [...new Set(
     allData.map(r => r.area).filter(a =>
       a && !a.startsWith('#') && a !== '..' && a !== 'Area Name'
     )
   )].sort();
 
-  const areaSel = document.getElementById('area-sel');
-  areaSel.innerHTML = '<option value="">All Areas</option>';
-  areas.forEach(a => {
-    const o = document.createElement('option');
-    o.value = a; o.textContent = a;
-    areaSel.appendChild(o);
-  });
-
-  /* Sales Men — exclude discontinued (X/x prefix) and SUSPENCE */
-  const smList = [...new Set(
+  /* Sales Men — exclude discontinued X-prefix and SUSPENCE */
+  listSM = [...new Set(
     allData.map(r => r.sm).filter(s =>
-      s && s !== 'Sales Men' && !s.toUpperCase().startsWith('X') && !s.includes('SUSPENCE')
+      s && s !== 'Sales Men' &&
+      !s.toUpperCase().startsWith('X') &&
+      !s.includes('SUSPENCE')
     )
   )].sort();
-
-  const smSel = document.getElementById('sm-sel');
-  smSel.innerHTML = '<option value="">All Sales Men</option>';
-  smList.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s; o.textContent = s;
-    smSel.appendChild(o);
-  });
 }
 
 
@@ -279,21 +257,37 @@ function applyPeriod(rows) {
   if (selPeriod === 'all') return rows;
   const now = new Date();
   let cut, cutEnd;
-  if (selPeriod === '3d') {
-    cut = new Date(now); cut.setDate(cut.getDate() - 3);
-  } else if (selPeriod === '1m') {
-    cut = new Date(now.getFullYear(), now.getMonth(), 1);
-  } else if (selPeriod === '3m') {
-    cut = new Date(now); cut.setMonth(cut.getMonth() - 3);
+
+  if (selPeriod === '1m') {
+    // This Month: 1st of current month → today (inclusive)
+    cut    = new Date(now.getFullYear(), now.getMonth(), 1);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // midnight tomorrow = includes today
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
+
+  } else if (selPeriod === 'lm') {
+    // Last Month: 1st → last day of previous month
+    cut    = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), 1); // midnight 1st of this month = end of last month
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
+
+  } else if (selPeriod === '3d') {
+    // Last 3 Days: yesterday, day before, day before that (exclude today)
+    cut    = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3);
+    cutEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
+
   } else if (selPeriod === '6m') {
     cut = new Date(now); cut.setMonth(cut.getMonth() - 6);
+    return rows.filter(r => r.date && r.date >= cut);
+
   } else if (selPeriod === 'fy2526') {
     // Indian FY: 1 Apr 2025 – 31 Mar 2026
-    cut    = new Date(2025, 3, 1);   // 1 Apr 2025
-    cutEnd = new Date(2026, 2, 31);  // 31 Mar 2026
-    return rows.filter(r => r.date && r.date >= cut && r.date <= cutEnd);
+    cut    = new Date(2025, 3, 1);
+    cutEnd = new Date(2026, 3, 1); // midnight 1 Apr 2026 = includes 31 Mar 2026
+    return rows.filter(r => r.date && r.date >= cut && r.date < cutEnd);
   }
-  return rows.filter(r => r.date && r.date >= cut);
+
+  return rows;
 }
 
 
@@ -311,21 +305,18 @@ function closeSheet() {
   document.body.style.overflow = '';
 }
 function applySheet() {
-  selCo1  = document.getElementById('co1-sel').value;
-  selCo2  = document.getElementById('co2-sel').value;
-  selArea = document.getElementById('area-sel').value;
-  selSM   = document.getElementById('sm-sel').value;
+  selCo1  = document.getElementById('co1-inp').dataset.val  || '';
+  selCo2  = document.getElementById('co2-inp').dataset.val  || '';
+  selArea = document.getElementById('area-inp').dataset.val || '';
+  selSM   = document.getElementById('sm-inp').dataset.val   || '';
   closeSheet();
   renderAll();
 }
 function resetFilters() {
-  selPeriod = 'all'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
+  selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pb[data-p="all"]').classList.add('active');
-  document.getElementById('co1-sel').value  = '';
-  document.getElementById('co2-sel').value  = '';
-  document.getElementById('area-sel').value = '';
-  document.getElementById('sm-sel').value   = '';
+  document.querySelector('.pb[data-p="1m"]').classList.add('active');
+  ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
   clearParty(false);
   clearItem(false);
   closeSheet();
@@ -334,11 +325,83 @@ function resetFilters() {
 
 
 /* ══════════════════════════════════════
+   SHEET SEARCH (Co1, Co2, Area, SM)
+══════════════════════════════════════ */
+
+/* Config for each sheet filter field */
+const SHEET_CFG = {
+  co1:  { list: () => listCo,   placeholder: 'All Companies',  icon: '🏭' },
+  co2:  { list: () => listCo,   placeholder: '— None —',       icon: '🏭' },
+  area: { list: () => listArea, placeholder: 'All Areas',       icon: '📍' },
+  sm:   { list: () => listSM,   placeholder: 'All Sales Men',   icon: '👤' },
+};
+
+function onSheetSearch(key) {
+  const inp  = document.getElementById(key + '-inp');
+  const drop = document.getElementById(key + '-drop');
+  const clr  = document.getElementById(key + '-clr');
+  const q    = inp.value.trim();
+
+  clr.classList.toggle('hidden', !inp.value);
+
+  const list    = SHEET_CFG[key].list();
+  const matches = fuzzySort(list, q).slice(0, 80);
+
+  if (!matches.length) { drop.classList.add('hidden'); return; }
+
+  drop.innerHTML = '';
+  matches.forEach(name => {
+    const d  = document.createElement('div');
+    d.className = 'drop-item';
+    const nm = document.createElement('span');
+    nm.className = 'drop-name';
+    nm.innerHTML = highlight(name, q);
+    d.appendChild(nm);
+    d.addEventListener('touchstart', e => { e.preventDefault(); selectSheetFilter(key, name); }, { passive: false });
+    d.addEventListener('mousedown',  e => { e.preventDefault(); selectSheetFilter(key, name); });
+    drop.appendChild(d);
+  });
+  drop.classList.remove('hidden');
+}
+
+function selectSheetFilter(key, value) {
+  const inp = document.getElementById(key + '-inp');
+  inp.value = value;
+  inp.dataset.val = value;                        // store actual selected value
+  document.getElementById(key + '-clr').classList.remove('hidden');
+  document.getElementById(key + '-drop').classList.add('hidden');
+  document.getElementById('sbox-' + key).classList.add('s-active');
+}
+
+function clearSheetFilter(key, doFocus = true) {
+  const inp = document.getElementById(key + '-inp');
+  inp.value = '';
+  inp.dataset.val = '';
+  document.getElementById(key + '-clr').classList.add('hidden');
+  document.getElementById(key + '-drop').classList.add('hidden');
+  document.getElementById('sbox-' + key).classList.remove('s-active');
+  if (doFocus) inp.focus();
+}
+
+/* Close dropdowns when input loses focus */
+['co1','co2','area','sm'].forEach(key => {
+  document.getElementById(key + '-inp').addEventListener('blur', () => {
+    setTimeout(() => document.getElementById(key + '-drop').classList.add('hidden'), 250);
+  });
+  /* If user types something but doesn't pick from dropdown, clear the stored val */
+  document.getElementById(key + '-inp').addEventListener('input', () => {
+    document.getElementById(key + '-inp').dataset.val = '';
+    document.getElementById('sbox-' + key).classList.remove('s-active');
+  });
+});
+
+
+/* ══════════════════════════════════════
    BADGE + CHIPS
 ══════════════════════════════════════ */
 function updateBadge() {
   let n = 0;
-  if (selPeriod !== 'all') n++;
+  if (selPeriod !== '1m') n++;   // 1m = This Month = default, don't count it
   if (selCo1)    n++;
   if (selCo2)    n++;
   if (selArea)   n++;
@@ -377,12 +440,12 @@ function updateChips() {
   if (selArea)  addChip('Area: '    + selArea, () => {
     selArea = ''; document.getElementById('area-sel').value = ''; renderAll();
   });
-  if (selPeriod !== 'all') {
-    const labels = { '3d': 'Last 3 Days', '1m': 'This Month', '3m': 'Last 3M', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
+  if (selPeriod !== '1m') {
+    const labels = { 'all': 'All Time', 'lm': 'Last Month', '3d': 'Last 3 Days', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
     addChip(labels[selPeriod] || selPeriod, () => {
-      selPeriod = 'all';
+      selPeriod = '1m';
       document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-      document.querySelector('.pb[data-p="all"]').classList.add('active');
+      document.querySelector('.pb[data-p="1m"]').classList.add('active');
       renderAll();
     });
   }
