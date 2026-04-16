@@ -163,6 +163,16 @@ PRAJJWAL: {
     salesmen:    null,
   },
      
+   ROHIT: {
+    password:    '3003',
+    displayName: 'Khandesh Area Manager',
+    companies:   null,
+    areas:       ['NASHIK', 'JALGAON', 'DHULE', 'NANDURBAR'],
+    salesmen:    null,
+  },
+   
+   
+   
    /* ── EXAMPLE: Field Salesman — sees only his own rows ── */
   BRIJESH: {
     password:    'Brij@123',
