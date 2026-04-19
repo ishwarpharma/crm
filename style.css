@@ -288,6 +288,24 @@ input, select, button { font-family: var(--font); }
   white-space: nowrap;
 }
 .hdr-filter-btn:active { background: rgba(255,255,255,.22); }
+.hdr-reset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.85);
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  transition: background .15s, transform .2s;
+}
+.hdr-reset-btn:active {
+  background: rgba(255,255,255,.25);
+  transform: rotate(-180deg);
+}
 .fbadge {
   position: absolute;
   top: -5px; right: -5px;
