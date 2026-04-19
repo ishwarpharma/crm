@@ -33,8 +33,8 @@
 const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
-  ushma: {
-    password:    'jitu',
+  BAKAA: {
+    password:    '3501',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
