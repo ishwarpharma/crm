@@ -34,7 +34,7 @@ const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
   BAKAA: {
-    password:    'USHMAJITU',
+    password:    '3501',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
