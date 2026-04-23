@@ -163,6 +163,15 @@ PRAJJWAL: {
     salesmen:    null,
   },
      
+  PANDIT: {
+    password:    '1978',
+    displayName: 'Nanded Area Manager',
+    companies:   null,
+    areas:       ['NANDED', 'PARBHANI', 'LATUR', 'BEED', 'OSMANABAD', 'SAMBHAJINAGAR', 'JALNA' , 'HINGOLI'],
+    salesmen:    null,
+  },
+   
+   
    ROHIT: {
     password:    '3003',
     displayName: 'Khandesh Area Manager',
