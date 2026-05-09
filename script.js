@@ -24,13 +24,39 @@ let selItem   = '';
 ══════════════════════════════════════ */
 let pinValue = '';   // current PIN being entered
 
+const LS_KEY = 'ishwarcrm_pin';  // localStorage key
+
+/* ── Auto-login on page load if PIN saved on this device ── */
+window.addEventListener('DOMContentLoaded', () => {
+  const savedPin = localStorage.getItem(LS_KEY);
+  if (savedPin) {
+    const entry = (typeof USERS !== 'undefined')
+      ? Object.entries(USERS).find(([, u]) => u.pin === savedPin)
+      : null;
+    if (entry) {
+      // Valid saved PIN — log in silently, skip PIN screen
+      const [un, user] = entry;
+      currentUser = { username: un, ...user };
+      document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
+      document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      loadCSV();
+      return;
+    } else {
+      // Saved PIN no longer valid (user removed) — clear it
+      localStorage.removeItem(LS_KEY);
+    }
+  }
+  // No saved PIN — show PIN screen normally
+});
+
 function focusPin() {
   document.getElementById('pin-hidden').focus();
 }
 
 /* Called when hidden input changes (mobile keyboard) */
 function onPinInput(val) {
-  // Keep only digits, max 6
   const digits = String(val).replace(/\D/g, '').slice(0, 6);
   pinValue = digits;
   updatePinDots();
@@ -65,17 +91,15 @@ function updatePinDots() {
 
 function shakeDots() {
   for (let i = 0; i < 6; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.classList.add('error');
+    document.getElementById('pd' + i).classList.add('error');
   }
   setTimeout(() => { pinValue = ''; updatePinDots(); }, 700);
 }
 
 function attemptLogin() {
-  const err  = document.getElementById('login-err');
-  const pin  = pinValue.trim();
+  const err = document.getElementById('login-err');
+  const pin = pinValue.trim();
 
-  // Search all users for matching PIN
   const entry = (typeof USERS !== 'undefined')
     ? Object.entries(USERS).find(([, u]) => u.pin === pin)
     : null;
@@ -83,7 +107,6 @@ function attemptLogin() {
   if (!entry) {
     err.classList.remove('hidden');
     shakeDots();
-    // Reset hidden input too
     const hi = document.getElementById('pin-hidden');
     if (hi) hi.value = '';
     return;
@@ -93,9 +116,11 @@ function attemptLogin() {
   const [un, user] = entry;
   currentUser = { username: un, ...user };
 
-  document.getElementById('hdr-av').textContent  = (user.displayName || un).charAt(0).toUpperCase();
-  document.getElementById('hdr-co').textContent  = buildAccessLabel(user);
+  // ── Save PIN to this device so next visit is automatic ──
+  try { localStorage.setItem(LS_KEY, pin); } catch(e) {}
 
+  document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
+  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
@@ -120,6 +145,9 @@ document.addEventListener('keydown', e => {
 });
 
 function logout() {
+  // ── Clear saved PIN from this device ──
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
+
   currentUser = null;
   allData     = [];
   pinValue    = '';
@@ -127,7 +155,6 @@ function logout() {
 
   if (chart) { chart.destroy(); chart = null; }
 
-  // Reset PIN UI
   updatePinDots();
   document.getElementById('login-err').classList.add('hidden');
   const hi = document.getElementById('pin-hidden');
