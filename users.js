@@ -98,7 +98,16 @@ YOGESH: {
     salesmen:    null,   // all salesmen
   },
 
-/* ── ALKEM MAXX REP ── */
+RAJESH: {
+    pin:             '261083',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM( HC)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
+      
+   /* ── ALKEM MAXX REP ── */
   UMESH123: {
     pin:          '224466',
     displayName: 'Alkem Team',
