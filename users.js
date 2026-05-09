@@ -209,7 +209,7 @@ PRAJJWAL: {
   },
    
  KRANTI: {
-    pin:             '404200',
+    pin:             '864042',
     displayName: 'Kranti',
     companies:   null,
     areas:       null,
