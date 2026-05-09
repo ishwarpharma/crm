@@ -34,7 +34,7 @@ const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
   BAKAA: {
-    password:    '3501',
+    pin:         '443501',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
@@ -42,7 +42,7 @@ const USERS = {
   },
 
 SAPURVA: {
-    password:    'BAPAJI2026',
+    pin:         '272600',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
@@ -53,7 +53,7 @@ SAPURVA: {
    
    /* ── KEMSYN REP ── */
   DEEPAKSD: {
-    password:    'KEM@1234',
+    pin:          '534100',
     displayName: 'Kemsyn Team',
     companies:   ['KEMSYN'],
     areas:       null,   // all areas
@@ -61,7 +61,7 @@ SAPURVA: {
   },
 
 YOGESH: {
-    password:    'SWAMI8989',
+    pin:         '898900',
     displayName: 'Kemsyn Team',
     companies:   ['KEMSYN'],
     areas:       null,   // all areas
@@ -72,7 +72,7 @@ YOGESH: {
    
  /* ── CADILA REP ── */
   VINAYAK: {
-    password:    'VINAYAK03',
+    pin:         '030300',
     displayName: 'Cadila Team',
     companies:   ['CADILA', 'CADILA(NET)'],
     areas:       null,   // all areas
@@ -81,7 +81,7 @@ YOGESH: {
    
  /* ── CSC REP ── */
   DIPESH: {
-    password:    'MAULI8600',
+    pin:         '860000',
     displayName: 'CSC Team',
     companies:   ['CSC'],
     areas:       null,   // all areas
@@ -91,7 +91,7 @@ YOGESH: {
    
    /* ── ALKEM HC REP ── */
   ROSHAN: {
-    password:    '1806',
+    pin:             '180600',
     displayName: 'Alkem Team',
     companies:   ['ALKEM( HC)'],
     areas:       null,   // all areas
@@ -100,7 +100,7 @@ YOGESH: {
 
 /* ── ALKEM MAXX REP ── */
   UMESH123: {
-    password:    'VANSH726',
+    pin:          '726000',
     displayName: 'Alkem Team',
     companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
@@ -108,7 +108,7 @@ YOGESH: {
   },
    
 PRAJJWAL: {
-    password:    'SUNNY1504',
+    pin:         '150400',
     displayName: 'Alkem Team',
     companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
@@ -120,7 +120,7 @@ PRAJJWAL: {
    
    /* ── AKUMENTIS REP ── */
   ANUPTIWARE: {
-    password:    '1111',
+    pin:             '111100',
     displayName: 'Akumentis Team',
     companies:   ['AKUMENTIS', 'AKUMENTIS(NET)'],
     areas:       null,   // all areas
@@ -130,7 +130,7 @@ PRAJJWAL: {
    
    /* ── ALKEM ── */
   ALKEM: {
-    password:    'ALKEM',
+    pin:            '253600',
     displayName: 'Alkem Team',
     companies:   ['ALKEM( HC)', 'ALKEM(.MAXX)', 'ALKEM(.CHRONIC)', 'ALKEM(FUTURA)'],
     areas:       null,
@@ -139,7 +139,7 @@ PRAJJWAL: {
 
   /* ── THEOGEN ── */
   VIJAY: {
-    password:    'VIJAYRAJ',
+    pin:         '847200',
     displayName: 'Theogen Team',
     companies:   ['THEOGEN', 'THEOGEN(NET)'],
     areas:       null,
@@ -148,7 +148,7 @@ PRAJJWAL: {
 
   /* ── EXAMPLE: Area Manager — all companies, only Thane area ── */
   THANE_MGR: {
-    password:    'Thane@123',
+    pin:        '123000',
     displayName: 'Thane Area Manager',
     companies:   null,
     areas:       ['22-THANE', '23-BHIWANDI', '24-KLWA-DOMBIV', '25-KLY-ULH-BADL'],
@@ -156,7 +156,7 @@ PRAJJWAL: {
   },
 
  PRAVIN: {
-    password:    'PAWAR2551',
+    pin:        '255100',
     displayName: 'Thane Area Manager',
     companies:   null,
     areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR'],
@@ -164,7 +164,7 @@ PRAJJWAL: {
   },
      
   PANDIT: {
-    password:    '1978',
+    pin:             '197800',
     displayName: 'Nanded Area Manager',
     companies:   null,
     areas:       ['NANDED', 'PARBHANI', 'LATUR', 'BEED', 'OSMANABAD', 'SAMBHAJINAGAR', 'JALNA' , 'HINGOLI'],
@@ -173,7 +173,7 @@ PRAJJWAL: {
    
    
    ROHIT: {
-    password:    '3003',
+    pin:             '300300',
     displayName: 'Khandesh Area Manager',
     companies:   null,
     areas:       ['NASHIK', 'JALGAON', 'DHULE', 'NANDURBAR'],
@@ -184,7 +184,7 @@ PRAJJWAL: {
    
    /* ── EXAMPLE: Field Salesman — sees only his own rows ── */
   BRIJESH: {
-    password:    'Brij@123',
+    pin:         '112300',
     displayName: 'Brijesh',
     companies:   null,
     areas:       null,
@@ -193,7 +193,7 @@ PRAJJWAL: {
 
   /* ── GANESH: Field Salesman — sees only his own rows ── */
   GANESH: {
-    password:    '1288',
+    pin:             '128800',
     displayName: 'Ganesh',
     companies:   null,
     areas:       null,
@@ -201,7 +201,7 @@ PRAJJWAL: {
   },
    
     SWAPNALI: {
-    password:    'KANU123',
+    pin:          '123456',
     displayName: 'Swapnali',
     companies:   null,
     areas:       null,
@@ -209,7 +209,7 @@ PRAJJWAL: {
   },
    
  KRANTI: {
-    password:    '4042',
+    pin:             '404200',
     displayName: 'Kranti',
     companies:   null,
     areas:       null,
@@ -219,7 +219,7 @@ PRAJJWAL: {
    
    
    KANCHAN: {
-    password:    'KADWE123',
+    pin:         '432100',
     displayName: 'Kanchan',
     companies:   null,
     areas:       null,
@@ -227,7 +227,7 @@ PRAJJWAL: {
   },
 
 PAYAL: {
-    password:    'BHAVNA',
+    pin:           '248600',
     displayName: 'Payal',
     companies:   null,
     areas:       null,
@@ -235,7 +235,7 @@ PAYAL: {
   },
   
 ARCHANA: {
-    password:    '0822',
+    pin:             '082200',
     displayName: 'Archana',
     companies:   null,
     areas:       null,
@@ -243,7 +243,7 @@ ARCHANA: {
      },
    
  KHETU: {
-    password:    '7788',
+    pin:             '778800',
     displayName: 'Narendra',
     companies:   null,
     areas:       null,
@@ -252,7 +252,7 @@ ARCHANA: {
       
    /* ── EXAMPLE: Phone order taker — specific company + area ── */
   ORDER_DESK: {
-    password:    'Order@123',
+    pin:        '999001',
     displayName: 'Order Desk',
     companies:   ['CADILA', 'CADILA(NET)'],
     areas:       ['1-MUM-DAWABAZAR', '1-MUM-SOBO-WHC'],
@@ -264,7 +264,7 @@ ARCHANA: {
   Copy and paste this template, fill in the values:
 
   USERNAME: {
-    password:    'StrongPass@123',
+    pin:         '123456',
     displayName: 'Full Name or Role',
     companies:   ['COMPANY NAME'],   or null for all
     areas:       ['AREA NAME'],      or null for all

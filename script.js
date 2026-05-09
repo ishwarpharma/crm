@@ -20,31 +20,81 @@ let selItem   = '';
 
 
 /* ══════════════════════════════════════
-   LOGIN / LOGOUT
+   PIN LOGIN
 ══════════════════════════════════════ */
-function togglePw() {
-  const el = document.getElementById('inp-pw');
-  el.type = el.type === 'password' ? 'text' : 'password';
+let pinValue = '';   // current PIN being entered
+
+function focusPin() {
+  document.getElementById('pin-hidden').focus();
+}
+
+/* Called when hidden input changes (mobile keyboard) */
+function onPinInput(val) {
+  // Keep only digits, max 6
+  const digits = String(val).replace(/\D/g, '').slice(0, 6);
+  pinValue = digits;
+  updatePinDots();
+  if (digits.length === 6) attemptLogin();
+}
+
+/* Called by on-screen keypad */
+function padPress(digit) {
+  if (pinValue.length >= 6) return;
+  pinValue += digit;
+  updatePinDots();
+  if (pinValue.length === 6) attemptLogin();
+}
+function padDel() {
+  pinValue = pinValue.slice(0, -1);
+  updatePinDots();
+  document.getElementById('login-err').classList.add('hidden');
+}
+function padClear() {
+  pinValue = '';
+  updatePinDots();
+  document.getElementById('login-err').classList.add('hidden');
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.classList.toggle('filled', i < pinValue.length);
+    dot.classList.remove('error');
+  }
+}
+
+function shakeDots() {
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.classList.add('error');
+  }
+  setTimeout(() => { pinValue = ''; updatePinDots(); }, 700);
 }
 
 function attemptLogin() {
-  const un  = document.getElementById('inp-un').value.trim().toUpperCase();
-  const pw  = document.getElementById('inp-pw').value;
-  const err = document.getElementById('login-err');
+  const err  = document.getElementById('login-err');
+  const pin  = pinValue.trim();
 
-  const user = (typeof USERS !== 'undefined') ? USERS[un] : null;
-  if (!user || user.password !== pw) {
+  // Search all users for matching PIN
+  const entry = (typeof USERS !== 'undefined')
+    ? Object.entries(USERS).find(([, u]) => u.pin === pin)
+    : null;
+
+  if (!entry) {
     err.classList.remove('hidden');
-    document.getElementById('inp-pw').value = '';
+    shakeDots();
+    // Reset hidden input too
+    const hi = document.getElementById('pin-hidden');
+    if (hi) hi.value = '';
     return;
   }
 
   err.classList.add('hidden');
+  const [un, user] = entry;
   currentUser = { username: un, ...user };
 
-  /* Header sub-line: show what restrictions apply */
-  document.getElementById('hdr-av').textContent = un.charAt(0);
-  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+  document.getElementById('hdr-av').textContent  = (user.displayName || un).charAt(0).toUpperCase();
+  document.getElementById('hdr-co').textContent  = buildAccessLabel(user);
 
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
@@ -61,23 +111,27 @@ function buildAccessLabel(user) {
   return parts.join(' · ');
 }
 
-/* Enter key on login */
+/* Physical keyboard support on desktop */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' &&
-      !document.getElementById('login-screen').classList.contains('hidden'))
-    attemptLogin();
+  if (document.getElementById('login-screen').classList.contains('hidden')) return;
+  if (e.key >= '0' && e.key <= '9') padPress(e.key);
+  else if (e.key === 'Backspace')    padDel();
+  else if (e.key === 'Escape')       padClear();
 });
 
 function logout() {
   currentUser = null;
   allData     = [];
+  pinValue    = '';
   selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
 
   if (chart) { chart.destroy(); chart = null; }
 
-  document.getElementById('inp-un').value = '';
-  document.getElementById('inp-pw').value = '';
+  // Reset PIN UI
+  updatePinDots();
   document.getElementById('login-err').classList.add('hidden');
+  const hi = document.getElementById('pin-hidden');
+  if (hi) hi.value = '';
 
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="1m"]').classList.add('active');
