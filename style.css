@@ -221,6 +221,76 @@ input, select, button { font-family: var(--font); }
 }
 .demo-hint b { color: var(--text2); }
 
+/* ── PIN LOGIN ── */
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 24px 0 8px;
+}
+.pin-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  transition: background .15s, border-color .15s, transform .12s;
+  display: block;
+}
+.pin-dot.filled {
+  background: var(--blue);
+  border-color: var(--blue);
+  transform: scale(1.15);
+}
+.pin-dot.error {
+  background: var(--rose);
+  border-color: var(--rose);
+}
+.pin-tap-area {
+  height: 12px; /* small invisible tap zone between dots and error */
+}
+
+/* Numeric keypad */
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+.pk {
+  padding: 16px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: #f8fafc;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-appearance: none;
+  transition: background .1s, transform .1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  -webkit-tap-highlight-color: transparent;
+}
+.pk:active {
+  background: var(--blue-lt);
+  border-color: var(--blue);
+  transform: scale(.93);
+}
+.pk-clear {
+  font-family: var(--font);
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--rose);
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+.pk-clear:active { background: #fecdd3; }
+.pk-del { background: #f8fafc; }
+.pk-del:active { background: var(--blue-lt); }
+
 /* ══════════════════════════════════════
    APP SHELL
 ══════════════════════════════════════ */

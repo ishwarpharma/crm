@@ -37,43 +37,59 @@
       <span class="brand-name">IshwarCRM</span>
     </div>
 
-    <h2 class="login-h">Welcome back</h2>
-    <p class="login-p">Sign in to explore your sales data</p>
+    <h2 class="login-h">Enter your PIN</h2>
+    <p class="login-p">Type your 6-digit access code</p>
 
-    <div class="fld">
-      <label class="fld-lbl">Username</label>
-      <div class="fld-wrap">
-        <svg class="fld-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-        </svg>
-        <input id="inp-un" type="text" placeholder="Enter username" autocomplete="username" autocapitalize="off" spellcheck="false"/>
-      </div>
+    <!-- PIN dots display -->
+    <div class="pin-dots" id="pin-dots">
+      <span class="pin-dot" id="pd0"></span>
+      <span class="pin-dot" id="pd1"></span>
+      <span class="pin-dot" id="pd2"></span>
+      <span class="pin-dot" id="pd3"></span>
+      <span class="pin-dot" id="pd4"></span>
+      <span class="pin-dot" id="pd5"></span>
     </div>
 
-    <div class="fld">
-      <label class="fld-lbl">Password</label>
-      <div class="fld-wrap">
-        <svg class="fld-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-        </svg>
-        <input id="inp-pw" type="password" placeholder="Password" autocomplete="current-password"/>
-        <button class="eye-btn" onclick="togglePw()" type="button" tabindex="-1" aria-label="Toggle password">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+    <!-- Hidden numeric input — triggers numeric keyboard on mobile -->
+    <input id="pin-hidden"
+           type="number"
+           inputmode="numeric"
+           pattern="[0-9]*"
+           maxlength="6"
+           autocomplete="one-time-code"
+           style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+           oninput="onPinInput(this.value)"/>
+
+    <!-- Tap anywhere on dots to focus input -->
+    <div class="pin-tap-area" onclick="focusPin()"></div>
 
     <div id="login-err" class="login-err hidden">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
       </svg>
-      Incorrect username or password
+      Invalid PIN. Please try again.
     </div>
 
-    <button class="btn-login" onclick="attemptLogin()">Sign In →</button>
-    <div class="demo-hint">Demo — username: <b>CADILA</b> &nbsp;·&nbsp; password: <b>CADILA</b></div>
+    <!-- Numeric keypad (works on all devices incl. desktop) -->
+    <div class="pin-pad">
+      <button class="pk" onclick="padPress('1')">1</button>
+      <button class="pk" onclick="padPress('2')">2</button>
+      <button class="pk" onclick="padPress('3')">3</button>
+      <button class="pk" onclick="padPress('4')">4</button>
+      <button class="pk" onclick="padPress('5')">5</button>
+      <button class="pk" onclick="padPress('6')">6</button>
+      <button class="pk" onclick="padPress('7')">7</button>
+      <button class="pk" onclick="padPress('8')">8</button>
+      <button class="pk" onclick="padPress('9')">9</button>
+      <button class="pk pk-clear" onclick="padClear()">C</button>
+      <button class="pk" onclick="padPress('0')">0</button>
+      <button class="pk pk-del" onclick="padDel()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+          <line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/>
+        </svg>
+      </button>
+    </div>
 
   </div>
 </div>
