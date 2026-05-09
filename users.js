@@ -34,7 +34,7 @@ const USERS = {
 
   /* ── ADMIN — full unrestricted access ── */
   BAKAA: {
-    pin:         '350100',
+    pin:         '443501',
     displayName: 'Administrator',
     companies:   null,   // all companies
     areas:       null,   // all areas
