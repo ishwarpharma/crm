@@ -53,7 +53,7 @@ SAPURVA: {
    
    /* ── KEMSYN REP ── */
   DEEPAKSD: {
-    pin:          '534100',
+    pin:          '124708',
     displayName: 'Kemsyn Team',
     companies:   ['KEMSYN'],
     areas:       null,   // all areas
