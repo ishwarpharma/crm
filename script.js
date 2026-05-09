@@ -425,21 +425,44 @@ function onSheetSearch(key) {
 
   clr.classList.toggle('hidden', !inp.value);
 
-  const list    = SHEET_CFG[key].list();
-  const matches = fuzzySort(list, q).slice(0, 80);
+  const list = SHEET_CFG[key].list();
+  // If blank → show ALL options so user can scroll & browse
+  const matches = q ? fuzzySort(list, q) : list;
 
   if (!matches.length) { drop.classList.add('hidden'); return; }
 
   drop.innerHTML = '';
   matches.forEach(name => {
     const d  = document.createElement('div');
-    d.className = 'drop-item';
+    d.className = 'drop-item sheet-drop-item';
     const nm = document.createElement('span');
     nm.className = 'drop-name';
     nm.innerHTML = highlight(name, q);
     d.appendChild(nm);
-    d.addEventListener('touchstart', e => { e.preventDefault(); selectSheetFilter(key, name); }, { passive: false });
-    d.addEventListener('mousedown',  e => { e.preventDefault(); selectSheetFilter(key, name); });
+
+    /* ── SCROLL-SAFE TAP DETECTION ──
+       Record touch start position. On touchend, only select
+       if finger moved less than 8px — otherwise it was a scroll. */
+    let touchStartY = null;
+    d.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    d.addEventListener('touchend', e => {
+      if (touchStartY === null) return;
+      const moved = Math.abs(e.changedTouches[0].clientY - touchStartY);
+      if (moved < 8) {
+        e.preventDefault();
+        selectSheetFilter(key, name);
+      }
+      touchStartY = null;
+    }, { passive: false });
+
+    /* Mouse click for desktop */
+    d.addEventListener('mousedown', e => {
+      e.preventDefault();
+      selectSheetFilter(key, name);
+    });
+
     drop.appendChild(d);
   });
   drop.classList.remove('hidden');
@@ -448,7 +471,7 @@ function onSheetSearch(key) {
 function selectSheetFilter(key, value) {
   const inp = document.getElementById(key + '-inp');
   inp.value = value;
-  inp.dataset.val = value;                        // store actual selected value
+  inp.dataset.val = value;
   document.getElementById(key + '-clr').classList.remove('hidden');
   document.getElementById(key + '-drop').classList.add('hidden');
   document.getElementById('sbox-' + key).classList.add('s-active');
@@ -467,9 +490,9 @@ function clearSheetFilter(key, doFocus = true) {
 /* Close dropdowns when input loses focus */
 ['co1','co2','area','sm'].forEach(key => {
   document.getElementById(key + '-inp').addEventListener('blur', () => {
-    setTimeout(() => document.getElementById(key + '-drop').classList.add('hidden'), 250);
+    setTimeout(() => document.getElementById(key + '-drop').classList.add('hidden'), 300);
   });
-  /* If user types something but doesn't pick from dropdown, clear the stored val */
+  /* If user types something but doesn't pick, clear the stored val */
   document.getElementById(key + '-inp').addEventListener('input', () => {
     document.getElementById(key + '-inp').dataset.val = '';
     document.getElementById('sbox-' + key).classList.remove('s-active');

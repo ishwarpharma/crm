@@ -853,7 +853,17 @@ input, select, button { font-family: var(--font); }
   box-shadow: 0 0 0 3px rgba(37,99,235,.1);
   background: #fff;
 }
-.sheet-sbox .sdrop { z-index: 400; }
+/* Sheet dropdowns — taller, bigger tap targets for scroll browsing */
+.sheet-sbox .sdrop {
+  z-index: 400;
+  max-height: 260px;   /* taller so user can see more options */
+  overscroll-behavior: contain;
+}
+.sheet-drop-item {
+  padding: 14px 16px;  /* bigger tap area than regular drop-item */
+  font-size: .88rem;
+  min-height: 48px;    /* minimum 48px — Apple/Google tap target guideline */
+}
 
 .sheet-foot { padding: 16px 20px 4px; }
 .btn-apply {
