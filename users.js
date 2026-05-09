@@ -100,7 +100,7 @@ YOGESH: {
 
 /* ── ALKEM MAXX REP ── */
   UMESH123: {
-    pin:          '726000',
+    pin:          '224466',
     displayName: 'Alkem Team',
     companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
