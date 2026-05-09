@@ -201,7 +201,7 @@ PRAJJWAL: {
   },
    
     SWAPNALI: {
-    pin:          '123456',
+    pin:          '911924',
     displayName: 'Swapnali',
     companies:   null,
     areas:       null,
