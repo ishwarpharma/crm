@@ -243,7 +243,7 @@ ARCHANA: {
      },
    
  KHETU: {
-    pin:             '778800',
+    pin:             '820801',
     displayName: 'Narendra',
     companies:   null,
     areas:       null,
