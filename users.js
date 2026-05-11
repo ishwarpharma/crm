@@ -165,7 +165,7 @@ PRAJJWAL: {
   },
 
  PRAVIN: {
-    pin:        '255100',
+    pin:        '748261',
     displayName: 'Thane Area Manager',
     companies:   null,
     areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR'],
