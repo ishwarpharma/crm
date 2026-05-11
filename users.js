@@ -173,7 +173,7 @@ PRAJJWAL: {
   },
      
   PANDIT: {
-    pin:             '197800',
+    pin:             '560493',
     displayName: 'Nanded Area Manager',
     companies:   null,
     areas:       ['NANDED', 'PARBHANI', 'LATUR', 'BEED', 'OSMANABAD', 'SAMBHAJINAGAR', 'JALNA' , 'HINGOLI'],
