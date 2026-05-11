@@ -53,7 +53,7 @@ SAPURVA: {
    
    /* ── KEMSYN REP ── */
   DEEPAKSD: {
-    pin:          '534100',
+    pin:          '124708',
     displayName: 'Kemsyn Team',
     companies:   ['KEMSYN'],
     areas:       null,   // all areas
@@ -91,16 +91,25 @@ YOGESH: {
    
    /* ── ALKEM HC REP ── */
   ROSHAN: {
-    pin:             '180600',
+    pin:             '199806',
     displayName: 'Alkem Team',
     companies:   ['ALKEM( HC)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
 
-/* ── ALKEM MAXX REP ── */
+RAJESH: {
+    pin:             '261083',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM( HC)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
+      
+   /* ── ALKEM MAXX REP ── */
   UMESH123: {
-    pin:          '726000',
+    pin:          '224466',
     displayName: 'Alkem Team',
     companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
@@ -201,7 +210,7 @@ PRAJJWAL: {
   },
    
     SWAPNALI: {
-    pin:          '123456',
+    pin:          '911924',
     displayName: 'Swapnali',
     companies:   null,
     areas:       null,
@@ -209,7 +218,7 @@ PRAJJWAL: {
   },
    
  KRANTI: {
-    pin:             '404200',
+    pin:             '864042',
     displayName: 'Kranti',
     companies:   null,
     areas:       null,
@@ -243,7 +252,7 @@ ARCHANA: {
      },
    
  KHETU: {
-    pin:             '778800',
+    pin:             '820801',
     displayName: 'Narendra',
     companies:   null,
     areas:       null,

@@ -24,13 +24,39 @@ let selItem   = '';
 ══════════════════════════════════════ */
 let pinValue = '';   // current PIN being entered
 
+const LS_KEY = 'ishwarcrm_pin';  // localStorage key
+
+/* ── Auto-login on page load if PIN saved on this device ── */
+window.addEventListener('DOMContentLoaded', () => {
+  const savedPin = localStorage.getItem(LS_KEY);
+  if (savedPin) {
+    const entry = (typeof USERS !== 'undefined')
+      ? Object.entries(USERS).find(([, u]) => u.pin === savedPin)
+      : null;
+    if (entry) {
+      // Valid saved PIN — log in silently, skip PIN screen
+      const [un, user] = entry;
+      currentUser = { username: un, ...user };
+      document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
+      document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      loadCSV();
+      return;
+    } else {
+      // Saved PIN no longer valid (user removed) — clear it
+      localStorage.removeItem(LS_KEY);
+    }
+  }
+  // No saved PIN — show PIN screen normally
+});
+
 function focusPin() {
   document.getElementById('pin-hidden').focus();
 }
 
 /* Called when hidden input changes (mobile keyboard) */
 function onPinInput(val) {
-  // Keep only digits, max 6
   const digits = String(val).replace(/\D/g, '').slice(0, 6);
   pinValue = digits;
   updatePinDots();
@@ -65,17 +91,15 @@ function updatePinDots() {
 
 function shakeDots() {
   for (let i = 0; i < 6; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.classList.add('error');
+    document.getElementById('pd' + i).classList.add('error');
   }
   setTimeout(() => { pinValue = ''; updatePinDots(); }, 700);
 }
 
 function attemptLogin() {
-  const err  = document.getElementById('login-err');
-  const pin  = pinValue.trim();
+  const err = document.getElementById('login-err');
+  const pin = pinValue.trim();
 
-  // Search all users for matching PIN
   const entry = (typeof USERS !== 'undefined')
     ? Object.entries(USERS).find(([, u]) => u.pin === pin)
     : null;
@@ -83,7 +107,6 @@ function attemptLogin() {
   if (!entry) {
     err.classList.remove('hidden');
     shakeDots();
-    // Reset hidden input too
     const hi = document.getElementById('pin-hidden');
     if (hi) hi.value = '';
     return;
@@ -93,9 +116,11 @@ function attemptLogin() {
   const [un, user] = entry;
   currentUser = { username: un, ...user };
 
-  document.getElementById('hdr-av').textContent  = (user.displayName || un).charAt(0).toUpperCase();
-  document.getElementById('hdr-co').textContent  = buildAccessLabel(user);
+  // ── Save PIN to this device so next visit is automatic ──
+  try { localStorage.setItem(LS_KEY, pin); } catch(e) {}
 
+  document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
+  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
@@ -120,6 +145,9 @@ document.addEventListener('keydown', e => {
 });
 
 function logout() {
+  // ── Clear saved PIN from this device ──
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
+
   currentUser = null;
   allData     = [];
   pinValue    = '';
@@ -127,7 +155,6 @@ function logout() {
 
   if (chart) { chart.destroy(); chart = null; }
 
-  // Reset PIN UI
   updatePinDots();
   document.getElementById('login-err').classList.add('hidden');
   const hi = document.getElementById('pin-hidden');
@@ -398,21 +425,44 @@ function onSheetSearch(key) {
 
   clr.classList.toggle('hidden', !inp.value);
 
-  const list    = SHEET_CFG[key].list();
-  const matches = fuzzySort(list, q).slice(0, 80);
+  const list = SHEET_CFG[key].list();
+  // If blank → show ALL options so user can scroll & browse
+  const matches = q ? fuzzySort(list, q) : list;
 
   if (!matches.length) { drop.classList.add('hidden'); return; }
 
   drop.innerHTML = '';
   matches.forEach(name => {
     const d  = document.createElement('div');
-    d.className = 'drop-item';
+    d.className = 'drop-item sheet-drop-item';
     const nm = document.createElement('span');
     nm.className = 'drop-name';
     nm.innerHTML = highlight(name, q);
     d.appendChild(nm);
-    d.addEventListener('touchstart', e => { e.preventDefault(); selectSheetFilter(key, name); }, { passive: false });
-    d.addEventListener('mousedown',  e => { e.preventDefault(); selectSheetFilter(key, name); });
+
+    /* ── SCROLL-SAFE TAP DETECTION ──
+       Record touch start position. On touchend, only select
+       if finger moved less than 8px — otherwise it was a scroll. */
+    let touchStartY = null;
+    d.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    d.addEventListener('touchend', e => {
+      if (touchStartY === null) return;
+      const moved = Math.abs(e.changedTouches[0].clientY - touchStartY);
+      if (moved < 8) {
+        e.preventDefault();
+        selectSheetFilter(key, name);
+      }
+      touchStartY = null;
+    }, { passive: false });
+
+    /* Mouse click for desktop */
+    d.addEventListener('mousedown', e => {
+      e.preventDefault();
+      selectSheetFilter(key, name);
+    });
+
     drop.appendChild(d);
   });
   drop.classList.remove('hidden');
@@ -421,7 +471,7 @@ function onSheetSearch(key) {
 function selectSheetFilter(key, value) {
   const inp = document.getElementById(key + '-inp');
   inp.value = value;
-  inp.dataset.val = value;                        // store actual selected value
+  inp.dataset.val = value;
   document.getElementById(key + '-clr').classList.remove('hidden');
   document.getElementById(key + '-drop').classList.add('hidden');
   document.getElementById('sbox-' + key).classList.add('s-active');
@@ -440,9 +490,9 @@ function clearSheetFilter(key, doFocus = true) {
 /* Close dropdowns when input loses focus */
 ['co1','co2','area','sm'].forEach(key => {
   document.getElementById(key + '-inp').addEventListener('blur', () => {
-    setTimeout(() => document.getElementById(key + '-drop').classList.add('hidden'), 250);
+    setTimeout(() => document.getElementById(key + '-drop').classList.add('hidden'), 300);
   });
-  /* If user types something but doesn't pick from dropdown, clear the stored val */
+  /* If user types something but doesn't pick, clear the stored val */
   document.getElementById(key + '-inp').addEventListener('input', () => {
     document.getElementById(key + '-inp').dataset.val = '';
     document.getElementById('sbox-' + key).classList.remove('s-active');
