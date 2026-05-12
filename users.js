@@ -165,7 +165,7 @@ PRAJJWAL: {
   },
 
  PRAVIN: {
-    pin:        '255100',
+    pin:        '748261',
     displayName: 'Thane Area Manager',
     companies:   null,
     areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR'],
@@ -173,7 +173,7 @@ PRAJJWAL: {
   },
      
   PANDIT: {
-    pin:             '197800',
+    pin:             '560493',
     displayName: 'Nanded Area Manager',
     companies:   null,
     areas:       ['NANDED', 'PARBHANI', 'LATUR', 'BEED', 'OSMANABAD', 'SAMBHAJINAGAR', 'JALNA' , 'HINGOLI'],
