@@ -316,7 +316,7 @@ function setPeriod(p) {
     b.classList.toggle('active', b.dataset.p === p));
   document.querySelectorAll('.ppill').forEach(b =>
     b.classList.toggle('active', b.dataset.p === p));
-  renderDashboard();
+  renderAll();
 }
 
 document.getElementById('pgrid').addEventListener('click', e => {
