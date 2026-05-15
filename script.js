@@ -28,27 +28,36 @@ const LS_KEY = 'ishwarcrm_pin';  // localStorage key
 
 /* ── Auto-login on page load if PIN saved on this device ── */
 window.addEventListener('DOMContentLoaded', () => {
-  const savedPin = localStorage.getItem(LS_KEY);
-  if (savedPin) {
-    const entry = (typeof USERS !== 'undefined')
-      ? Object.entries(USERS).find(([, u]) => u.pin === savedPin)
-      : null;
-    if (entry) {
-      // Valid saved PIN — log in silently, skip PIN screen
-      const [un, user] = entry;
-      currentUser = { username: un, ...user };
-      document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
-      document.getElementById('hdr-co').textContent = buildAccessLabel(user);
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      loadCSV();
-      return;
-    } else {
-      // Saved PIN no longer valid (user removed) — clear it
-      localStorage.removeItem(LS_KEY);
+  // PWA gate check: if not installed, gate blocks everything — do nothing here.
+  // The gate script (loaded after this) will hide login-screen. We only proceed
+  // if running as an installed PWA (window.isInstalledPWA defined by gate script,
+  // but since both run on DOMContentLoaded, we defer auto-login by one microtask).
+  setTimeout(() => {
+    // If gate is blocking, bail out — gate script manages visibility
+    const gate = document.getElementById('pwa-gate');
+    if (gate && !gate.classList.contains('hidden')) return;
+
+    const savedPin = localStorage.getItem(LS_KEY);
+    if (savedPin) {
+      const entry = (typeof USERS !== 'undefined')
+        ? Object.entries(USERS).find(([, u]) => u.pin === savedPin)
+        : null;
+      if (entry) {
+        // Valid saved PIN — log in silently, skip PIN screen
+        const [un, user] = entry;
+        currentUser = { username: un, ...user };
+        document.getElementById('hdr-co').textContent = user.displayName || un;
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        loadCSV();
+        return;
+      } else {
+        // Saved PIN no longer valid (user removed) — clear it
+        localStorage.removeItem(LS_KEY);
+      }
     }
-  }
-  // No saved PIN — show PIN screen normally
+    // No saved PIN — login screen already visible (revealed by gate check)
+  }, 0);
 });
 
 function focusPin() {
@@ -119,8 +128,7 @@ function attemptLogin() {
   // ── Save PIN to this device so next visit is automatic ──
   try { localStorage.setItem(LS_KEY, pin); } catch(e) {}
 
-  document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
-  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+  document.getElementById('hdr-co').textContent = user.displayName || un;
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
@@ -144,32 +152,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'Escape')       padClear();
 });
 
-function logout() {
-  // ── Clear saved PIN from this device ──
-  try { localStorage.removeItem(LS_KEY); } catch(e) {}
-
-  currentUser = null;
-  allData     = [];
-  pinValue    = '';
-  selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
-
-  if (chart) { chart.destroy(); chart = null; }
-
-  updatePinDots();
-  document.getElementById('login-err').classList.add('hidden');
-  const hi = document.getElementById('pin-hidden');
-  if (hi) hi.value = '';
-
-  document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.pb[data-p="1m"]').classList.add('active');
-  ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
-
-  clearParty(false);
-  clearItem(false);
-
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('login-screen').classList.remove('hidden');
-}
+/* logout() removed — PIN is permanent once installed */
 
 
 /* ══════════════════════════════════════
@@ -326,12 +309,26 @@ function initDropdowns() {
 /* ══════════════════════════════════════
    PERIOD FILTER
 ══════════════════════════════════════ */
+/* Shared period setter — keeps pgrid (sheet) + ppill (home) in sync */
+function setPeriod(p) {
+  selPeriod = p;
+  document.querySelectorAll('.pb').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === p));
+  document.querySelectorAll('.ppill').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === p));
+  renderDashboard();
+}
+
 document.getElementById('pgrid').addEventListener('click', e => {
   const btn = e.target.closest('.pb');
   if (!btn) return;
-  document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  selPeriod = btn.dataset.p;
+  setPeriod(btn.dataset.p);
+});
+
+document.getElementById('period-pills').addEventListener('click', e => {
+  const btn = e.target.closest('.ppill');
+  if (!btn) return;
+  setPeriod(btn.dataset.p);
 });
 
 function applyPeriod(rows) {
@@ -397,6 +394,7 @@ function resetFilters() {
   selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="1m"]').classList.add('active');
+  document.querySelectorAll('.ppill').forEach(b => b.classList.toggle('active', b.dataset.p === '1m'));
   ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
   clearParty(false);
   clearItem(false);
@@ -547,9 +545,7 @@ function updateChips() {
   if (selPeriod !== '1m') {
     const labels = { 'all': 'All Time', 'lm': 'Last Month', '3d': 'Last 3 Days', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
     addChip(labels[selPeriod] || selPeriod, () => {
-      selPeriod = '1m';
-      document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-      document.querySelector('.pb[data-p="1m"]').classList.add('active');
+      setPeriod('1m');
       renderAll();
     });
   }
