@@ -46,8 +46,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // Valid saved PIN — log in silently, skip PIN screen
         const [un, user] = entry;
         currentUser = { username: un, ...user };
-        document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
-        document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+        document.getElementById('hdr-co').textContent = user.displayName || un;
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
         loadCSV();
@@ -129,8 +128,7 @@ function attemptLogin() {
   // ── Save PIN to this device so next visit is automatic ──
   try { localStorage.setItem(LS_KEY, pin); } catch(e) {}
 
-  document.getElementById('hdr-av').textContent = (user.displayName || un).charAt(0).toUpperCase();
-  document.getElementById('hdr-co').textContent = buildAccessLabel(user);
+  document.getElementById('hdr-co').textContent = user.displayName || un;
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
@@ -311,12 +309,26 @@ function initDropdowns() {
 /* ══════════════════════════════════════
    PERIOD FILTER
 ══════════════════════════════════════ */
+/* Shared period setter — keeps pgrid (sheet) + ppill (home) in sync */
+function setPeriod(p) {
+  selPeriod = p;
+  document.querySelectorAll('.pb').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === p));
+  document.querySelectorAll('.ppill').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === p));
+  renderDashboard();
+}
+
 document.getElementById('pgrid').addEventListener('click', e => {
   const btn = e.target.closest('.pb');
   if (!btn) return;
-  document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  selPeriod = btn.dataset.p;
+  setPeriod(btn.dataset.p);
+});
+
+document.getElementById('period-pills').addEventListener('click', e => {
+  const btn = e.target.closest('.ppill');
+  if (!btn) return;
+  setPeriod(btn.dataset.p);
 });
 
 function applyPeriod(rows) {
@@ -382,6 +394,7 @@ function resetFilters() {
   selPeriod = '1m'; selCo1 = ''; selCo2 = ''; selArea = ''; selSM = ''; selParty = ''; selItem = '';
   document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
   document.querySelector('.pb[data-p="1m"]').classList.add('active');
+  document.querySelectorAll('.ppill').forEach(b => b.classList.toggle('active', b.dataset.p === '1m'));
   ['co1','co2','area','sm'].forEach(k => clearSheetFilter(k, false));
   clearParty(false);
   clearItem(false);
@@ -532,9 +545,7 @@ function updateChips() {
   if (selPeriod !== '1m') {
     const labels = { 'all': 'All Time', 'lm': 'Last Month', '3d': 'Last 3 Days', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
     addChip(labels[selPeriod] || selPeriod, () => {
-      selPeriod = '1m';
-      document.querySelectorAll('.pb').forEach(b => b.classList.remove('active'));
-      document.querySelector('.pb[data-p="1m"]').classList.add('active');
+      setPeriod('1m');
       renderAll();
     });
   }
