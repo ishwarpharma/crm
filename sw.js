@@ -1,10 +1,10 @@
 /* ================================================================
    sw.js  —  IshwarCRM Service Worker
-   Minimal SW required for PWA installability on Android/Chrome.
-   Caches the app shell so it loads offline after install.
+   Network-first strategy: always tries network so updates show
+   immediately. Falls back to cache when offline.
    ================================================================ */
 
-const CACHE = 'ishwarcrm-v1';
+const CACHE = 'ishwarcrm-v2';
 const SHELL = [
   './',
   './index.html',
@@ -17,28 +17,34 @@ const SHELL = [
 ];
 
 self.addEventListener('install', e => {
+  // Pre-cache shell but don't wait — network-first means we always
+  // try the network anyway, cache is just the offline fallback.
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', e => {
+  // Delete ALL old caches so stale files never serve.
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', e => {
-  // Network-first for CSV data, cache-first for shell assets
-  if (e.request.url.endsWith('.csv')) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
-    );
-    return;
-  }
+  // Network-first for everything: try network, update cache, fall back to cache.
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(response => {
+        // Clone and cache the fresh response
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(e.request))
   );
 });

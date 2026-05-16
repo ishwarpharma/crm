@@ -344,28 +344,28 @@ input, select, button { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.18);
+  border: 1.5px solid rgba(255,255,255,.35);
+  color: #fff;
   border-radius: 20px;
   padding: 7px 13px;
   font-size: .75rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   position: relative;
   -webkit-appearance: none;
   transition: background .15s;
   white-space: nowrap;
 }
-.hdr-filter-btn:active { background: rgba(255,255,255,.22); }
+.hdr-filter-btn:active { background: rgba(255,255,255,.28); }
 .hdr-reset-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 34px; height: 34px;
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.18);
+  border: 1.5px solid rgba(255,255,255,.35);
+  color: #fff;
   border-radius: 50%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -397,13 +397,14 @@ input, select, button { font-family: var(--font); }
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  background: linear-gradient(to bottom, #1a3a7a 0px, #1a3a7a 56px, var(--bg) 120px);
 }
 
 /* ── FILTER CHIPS ── */
 .chips-row {
   display: flex;
   gap: 7px;
-  padding: 10px 14px;
+  padding: 6px 14px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -741,11 +742,12 @@ input, select, button { font-family: var(--font); }
 .sheet {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  background: var(--card);
+  background: #f8fafc;
   border-radius: 24px 24px 0 0;
   z-index: 301;
   padding-bottom: max(var(--sab), 12px);
-  box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+  box-shadow: 0 -8px 40px rgba(0,0,0,.25), 0 -1px 0 rgba(0,0,0,.08);
+  border-top: 1px solid #e2e8f0;
   animation: sheetUp .28s cubic-bezier(.22,1,.36,1);
   max-height: 88vh;
   overflow-y: auto;
@@ -1024,7 +1026,7 @@ input, select, button { font-family: var(--font); }
 .period-pills {
   display: flex;
   gap: 6px;
-  padding: 10px 14px 0;
+  padding: 10px 14px 12px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1034,23 +1036,24 @@ input, select, button { font-family: var(--font); }
 
 .ppill {
   flex-shrink: 0;
-  padding: 5px 13px;
+  padding: 6px 14px;
   border-radius: 20px;
-  border: 1.5px solid rgba(255,255,255,.15);
-  background: transparent;
-  color: rgba(255,255,255,.55);
+  border: 1.5px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.7);
   font-family: inherit;
-  font-size: .72rem;
-  font-weight: 500;
+  font-size: .73rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background .15s, color .15s, border-color .15s;
   white-space: nowrap;
 }
 .ppill.active {
-  background: var(--blue2, #2563eb);
-  border-color: var(--blue2, #2563eb);
+  background: #f97316;
+  border-color: #f97316;
   color: #fff;
+  box-shadow: 0 2px 10px rgba(249,115,22,.4);
 }
 .ppill:not(.active):active {
-  background: rgba(255,255,255,.08);
+  background: rgba(255,255,255,.15);
 }
