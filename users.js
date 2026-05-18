@@ -225,8 +225,6 @@ PRAJJWAL: {
     salesmen:    ['1KRANTI (MIS)'],
   },
    
-   
-   
    KANCHAN: {
     pin:         '432100',
     displayName: 'Kanchan',
@@ -235,6 +233,14 @@ PRAJJWAL: {
     salesmen:    ['1KANCHAN (MIS)'],
   },
 
+ASHIKA: {
+    pin:         '160540',
+    displayName: 'Ashika',
+    companies:   null,
+    areas:       null,
+    salesmen:    ['1ASHIKA (MIS)'],
+  },
+   
 PAYAL: {
     pin:           '248600',
     displayName: 'Payal',
