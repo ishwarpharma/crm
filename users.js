@@ -81,9 +81,9 @@ YOGESH: {
    
  /* ── CSC REP ── */
   DIPESH: {
-    pin:         '860000',
+    pin:         '180538',
     displayName: 'CSC Team',
-    companies:   ['CSC'],
+    companies:   ['CSC', 'CSC(INJ)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
@@ -136,15 +136,6 @@ PRAJJWAL: {
     salesmen:    null,   // all salesmen
   },
  
-   
-   /* ── ALKEM ── */
-  ALKEM: {
-    pin:            '253600',
-    displayName: 'Alkem Team',
-    companies:   ['ALKEM( HC)', 'ALKEM(.MAXX)', 'ALKEM(.CHRONIC)', 'ALKEM(FUTURA)'],
-    areas:       null,
-    salesmen:    null,
-  },
 
   /* ── THEOGEN ── */
   VIJAY: {
@@ -154,16 +145,7 @@ PRAJJWAL: {
     areas:       null,
     salesmen:    null,
   },
-
-  /* ── EXAMPLE: Area Manager — all companies, only Thane area ── */
-  THANE_MGR: {
-    pin:        '123000',
-    displayName: 'Thane Area Manager',
-    companies:   null,
-    areas:       ['22-THANE', '23-BHIWANDI', '24-KLWA-DOMBIV', '25-KLY-ULH-BADL'],
-    salesmen:    null,
-  },
-
+ 
  PRAVIN: {
     pin:        '748261',
     displayName: 'Thane Area Manager',
