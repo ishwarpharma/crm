@@ -106,7 +106,14 @@ RAJESH: {
     salesmen:    null,   // all salesmen
   },
    
-      
+ ARUN: {
+    pin:             '200513',
+    displayName: 'Alkem Team',
+    companies:   ['ALKEM( HC)'],
+    areas:       null,   // all areas
+    salesmen:    null,   // all salesmen
+  },
+   
    /* ── ALKEM MAXX REP ── */
   UMESH123: {
     pin:          '224466',
