@@ -794,7 +794,21 @@ function fillTableSimple(tbodyId, rows, type) {
     const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
     const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
     tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
-    tr.addEventListener('click', () => {
+    // Same touch-safe pattern as party/item rows
+    let _tsY = null;
+    tr.addEventListener('touchstart', e => { _tsY = e.touches[0].clientY; }, { passive: true });
+    tr.addEventListener('touchend', e => {
+      if (_tsY === null) return;
+      if (Math.abs(e.changedTouches[0].clientY - _tsY) < 8) {
+        e.preventDefault();
+        if (type === 'co')   toggleCo(row.name);
+        if (type === 'area') toggleArea(row.name);
+        if (type === 'sm')   toggleSM(row.name);
+      }
+      _tsY = null;
+    }, { passive: false });
+    tr.addEventListener('mousedown', e => {
+      e.preventDefault();
       if (type === 'co')   toggleCo(row.name);
       if (type === 'area') toggleArea(row.name);
       if (type === 'sm')   toggleSM(row.name);
