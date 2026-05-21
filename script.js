@@ -530,18 +530,10 @@ function updateChips() {
 
   if (selParty) addChip('Party: '   + truncate(selParty, 22), () => clearParty(true));
   if (selItem)  addChip('Item: '    + truncate(selItem,  22), () => clearItem(true));
-  if (selCo1)   addChip('Co: '      + truncate(selCo1,  20), () => {
-    selCo1 = ''; document.getElementById('co1-sel').value = ''; renderAll();
-  });
-  if (selCo2)   addChip('Co2: '     + truncate(selCo2,  20), () => {
-    selCo2 = ''; document.getElementById('co2-sel').value = ''; renderAll();
-  });
-  if (selSM)    addChip('SM: '      + truncate(selSM,   22), () => {
-    selSM = ''; document.getElementById('sm-sel').value = ''; renderAll();
-  });
-  if (selArea)  addChip('Area: '    + selArea, () => {
-    selArea = ''; document.getElementById('area-sel').value = ''; renderAll();
-  });
+  if (selCo1)   addChip('Co: '   + truncate(selCo1,  20), () => toggleCo(selCo1));
+  if (selCo2)   addChip('Co2: '  + truncate(selCo2,  20), () => { selCo2 = ''; const i = document.getElementById('co2-inp'); if(i){i.value='';i.dataset.val='';} renderAll(); });
+  if (selSM)    addChip('SM: '   + truncate(selSM,   22), () => toggleSM(selSM));
+  if (selArea)  addChip('Area: ' + selArea,               () => toggleArea(selArea));
   if (selPeriod !== '1m') {
     const labels = { 'all': 'All Time', 'lm': 'Last Month', '3d': 'Last 3 Days', '6m': 'Last 6M', 'fy2526': 'FY 25-26' };
     addChip(labels[selPeriod] || selPeriod, () => {
@@ -630,6 +622,8 @@ function renderChart(data) {
   const { labels, values } = buildMonthly(data);
 
   let ttl = 'Monthly Trend';
+  if (selCo1)    ttl = truncate(selCo1, 28);
+  if (selArea)   ttl = truncate(selArea, 28);
   if (selSM)     ttl = truncate(selSM, 28);
   if (selParty)  ttl = truncate(selParty, 28);
   if (selItem)   ttl = truncate(selItem, 28);
@@ -736,13 +730,13 @@ function renderTables(data) {
   const coRows = groupBy(data, 'co');
   document.getElementById('co-ttl').textContent = 'Company Sales';
   document.getElementById('co-cnt').textContent = coRows.length + ' companies';
-  fillTableSimple('co-body', coRows);
+  fillTableSimple('co-body', coRows, 'co');
 
   /* Area table */
   const aRows = groupBy(data, 'area');
   document.getElementById('area-ttl').textContent = 'Area Sales';
   document.getElementById('area-cnt').textContent = aRows.length + ' areas';
-  fillTableSimple('area-body', aRows);
+  fillTableSimple('area-body', aRows, 'area');
 
   /* Sales Men table */
   const smRows = groupBy(data, 'sm').filter(r =>
@@ -750,7 +744,7 @@ function renderTables(data) {
   );
   document.getElementById('sm-ttl').textContent = 'Sales Men';
   document.getElementById('sm-cnt').textContent = smRows.length + ' salesmen';
-  fillTableSimple('sm-body', smRows);
+  fillTableSimple('sm-body', smRows, 'sm');
 }
 
 function fillTable(tbodyId, rows, type) {
@@ -782,8 +776,8 @@ function fillTable(tbodyId, rows, type) {
 }
 
 
-/* Simple table — no click drill, just display */
-function fillTableSimple(tbodyId, rows) {
+/* Clickable table for co / area / sm — clicking applies that as a filter */
+function fillTableSimple(tbodyId, rows, type) {
   const tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
   if (!rows.length) {
@@ -791,14 +785,46 @@ function fillTableSimple(tbodyId, rows) {
       '<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--text3);font-size:.8rem;">No data</td></tr>';
     return;
   }
+  const active = type === 'co' ? selCo1 : type === 'area' ? selArea : selSM;
   rows.forEach((row, i) => {
     const tr  = document.createElement('tr');
+    tr.classList.add('row-clickable');
+    if (row.name === active) tr.classList.add('row-sel');
     const td0 = document.createElement('td'); td0.textContent = i + 1;
     const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
     const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
     tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
+    tr.addEventListener('click', () => {
+      if (type === 'co')   toggleCo(row.name);
+      if (type === 'area') toggleArea(row.name);
+      if (type === 'sm')   toggleSM(row.name);
+    });
     tbody.appendChild(tr);
   });
+}
+
+/* Toggle functions — click same row again to deselect */
+function toggleCo(name) {
+  selCo1 = (selCo1 === name) ? '' : name;
+  selCo2 = '';
+  // Sync filter sheet inputs
+  const inp1 = document.getElementById('co1-inp');
+  if (inp1) { inp1.value = selCo1; inp1.dataset.val = selCo1; }
+  const inp2 = document.getElementById('co2-inp');
+  if (inp2) { inp2.value = ''; inp2.dataset.val = ''; }
+  renderAll();
+}
+function toggleArea(name) {
+  selArea = (selArea === name) ? '' : name;
+  const inp = document.getElementById('area-inp');
+  if (inp) { inp.value = selArea; inp.dataset.val = selArea; }
+  renderAll();
+}
+function toggleSM(name) {
+  selSM = (selSM === name) ? '' : name;
+  const inp = document.getElementById('sm-inp');
+  if (inp) { inp.value = selSM; inp.dataset.val = selSM; }
+  renderAll();
 }
 
 

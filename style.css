@@ -722,7 +722,8 @@ input, select, button { font-family: var(--font); }
 }
 .tbl tbody tr:nth-child(even) { background: #fafbfc; }
 .tbl tbody tr { -webkit-tap-highlight-color: transparent; }
-.tbl tbody tr:active { background: var(--blue-lt); }
+.tbl tbody tr.row-clickable { cursor: pointer; }
+.tbl tbody tr.row-clickable:active { background: var(--blue-lt); }
 .tbl tbody tr.row-sel {
   background: var(--blue-lt);
   border-left: 3px solid var(--blue);
