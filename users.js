@@ -160,7 +160,15 @@ PRAJJWAL: {
     areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR'],
     salesmen:    null,
   },
-     
+
+ RAJENDRA: {
+    pin:        '280559',
+    displayName: 'Rajendra Sakpal',
+    companies:   null,
+    areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR', 'AHILYANAGAR', 'GOA', 'JALGAON', 'JALNA', 'KOKAN', 'NASHIK', 'PUNE', 'SAMBHAJINAGAR'],
+    salesmen:    null,
+  },
+   
   PANDIT: {
     pin:             '560493',
     displayName: 'Nanded Area Manager',
