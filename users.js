@@ -238,13 +238,7 @@ ASHIKA: {
     salesmen:    ['1ASHIKA (MIS)'],
   },
    
-PAYAL: {
-    pin:           '248600',
-    displayName: 'Payal',
-    companies:   null,
-    areas:       null,
-    salesmen:    ['1PAYAL (MIS)', '1SACHI (MIS)'],
-  },
+
   
 ARCHANA: {
     pin:             '082200',
