@@ -493,13 +493,6 @@ input, select, button { font-family: var(--font); }
   color: rgba(255,255,255,.4);
   margin-top: 9px;
 }
-.kpi-last-date {
-  font-size: .62rem;
-  color: rgba(255,255,255,.55);
-  margin-top: 5px;
-  font-weight: 500;
-  letter-spacing: .2px;
-}
 .kpi-trio {
   display: flex;
   flex-direction: column;

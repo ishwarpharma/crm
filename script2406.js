@@ -590,23 +590,11 @@ function renderKPIs(data) {
   const items   = new Set(data.map(r => r.item).filter(Boolean)).size;
   const bills   = new Set(data.map(r => r.bill).filter(Boolean)).size;
 
-  document.getElementById('k-sales').textContent     = fmtMoney(total);
+  document.getElementById('k-sales').textContent    = fmtMoney(total);
   document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
-  document.getElementById('k-parties').textContent   = fmtNum(parties);
-  document.getElementById('k-items').textContent     = fmtNum(items);
-  document.getElementById('k-bills').textContent     = fmtNum(bills);
-
-  // Last invoice date — always from full dataset so it never disappears on period filter
-  const el = document.getElementById('k-last-date');
-  if (el) {
-    const dates = allData.map(r => r.date).filter(Boolean);
-    if (dates.length) {
-      const latest = new Date(Math.max(...dates));
-      el.textContent = 'Data till ' + latest.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    } else {
-      el.textContent = '';
-    }
-  }
+  document.getElementById('k-parties').textContent  = fmtNum(parties);
+  document.getElementById('k-items').textContent    = fmtNum(items);
+  document.getElementById('k-bills').textContent    = fmtNum(bills);
 }
 
 
@@ -806,14 +794,9 @@ function fillTableSimple(tbodyId, rows, type) {
     const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
     const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
     tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
-    // Touch-safe: touchend handles mobile, mousedown handles desktop.
-    // didTouch flag stops mousedown from also firing after a touch.
+    // Same touch-safe pattern as party/item rows
     let _tsY = null;
-    let _didTouch = false;
-    tr.addEventListener('touchstart', e => {
-      _tsY = e.touches[0].clientY;
-      _didTouch = true;
-    }, { passive: true });
+    tr.addEventListener('touchstart', e => { _tsY = e.touches[0].clientY; }, { passive: true });
     tr.addEventListener('touchend', e => {
       if (_tsY === null) return;
       if (Math.abs(e.changedTouches[0].clientY - _tsY) < 8) {
@@ -823,10 +806,8 @@ function fillTableSimple(tbodyId, rows, type) {
         if (type === 'sm')   toggleSM(row.name);
       }
       _tsY = null;
-      setTimeout(() => { _didTouch = false; }, 300);
     }, { passive: false });
     tr.addEventListener('mousedown', e => {
-      if (_didTouch) return; // already handled by touchend
       e.preventDefault();
       if (type === 'co')   toggleCo(row.name);
       if (type === 'area') toggleArea(row.name);
