@@ -590,23 +590,14 @@ function renderKPIs(data) {
   const items   = new Set(data.map(r => r.item).filter(Boolean)).size;
   const bills   = new Set(data.map(r => r.bill).filter(Boolean)).size;
 
+  const dates  = allData.map(r => r.date).filter(Boolean);
+  const lastDt = dates.length ? new Date(Math.max(...dates)).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
+
   document.getElementById('k-sales').textContent     = fmtMoney(total);
-  document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
+  document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions' + (lastDt ? '  ·  Data till ' + lastDt : '');
   document.getElementById('k-parties').textContent   = fmtNum(parties);
   document.getElementById('k-items').textContent     = fmtNum(items);
   document.getElementById('k-bills').textContent     = fmtNum(bills);
-
-  // Last invoice date — always from full dataset so it never disappears on period filter
-  const el = document.getElementById('k-last-date');
-  if (el) {
-    const dates = allData.map(r => r.date).filter(Boolean);
-    if (dates.length) {
-      const latest = new Date(Math.max(...dates));
-      el.textContent = 'Data till ' + latest.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-    } else {
-      el.textContent = '';
-    }
-  }
 }
 
 
