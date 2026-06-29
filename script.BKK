@@ -388,6 +388,7 @@ function applySheet() {
   selArea = document.getElementById('area-inp').dataset.val || '';
   selSM   = document.getElementById('sm-inp').dataset.val   || '';
   closeSheet();
+  if ('caches' in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   renderAll();
 }
 function resetFilters() {
@@ -591,16 +592,9 @@ function renderKPIs(data) {
   const bills   = new Set(data.map(r => r.bill).filter(Boolean)).size;
 
   document.getElementById('k-sales').textContent    = fmtMoney(total);
-
-  const _ld = allData.map(r => r.date).filter(Boolean);
-const _ldt = _ld.length ? new Date(_ld.reduce((a,b) => a > b ? a : b)).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
-document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions' + (_ldt ? ' · till ' + _ldt : ''); 
-   
-//  changed above 3 line to get date. 
-//   document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
-  
-   
-   document.getElementById('k-parties').textContent  = fmtNum(parties);
+  const _ld = allData.map(r => r.date).filter(Boolean); const _ldt = _ld.length ? new Date(_ld.reduce((a,b) => a > b ? a : b)).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
+  document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions' + (_ldt ? ' · till ' + _ldt : '');
+  document.getElementById('k-parties').textContent  = fmtNum(parties);
   document.getElementById('k-items').textContent    = fmtNum(items);
   document.getElementById('k-bills').textContent    = fmtNum(bills);
 }
@@ -802,25 +796,11 @@ function fillTableSimple(tbodyId, rows, type) {
     const td1 = document.createElement('td'); td1.textContent = row.name; td1.title = row.name;
     const td2 = document.createElement('td'); td2.textContent = fmtMoney(row.amount);
     tr.appendChild(td0); tr.appendChild(td1); tr.appendChild(td2);
-    // Same touch-safe pattern as party/item rows
-    let _tsY = null;
-    tr.addEventListener('touchstart', e => { _tsY = e.touches[0].clientY; }, { passive: true });
-    tr.addEventListener('touchend', e => {
-      if (_tsY === null) return;
-      if (Math.abs(e.changedTouches[0].clientY - _tsY) < 8) {
-        e.preventDefault();
-        if (type === 'co')   toggleCo(row.name);
-        if (type === 'area') toggleArea(row.name);
-        if (type === 'sm')   toggleSM(row.name);
-      }
-      _tsY = null;
-    }, { passive: false });
-    tr.addEventListener('mousedown', e => {
-      e.preventDefault();
+    tr.addEventListener('touchstart', e => { e.preventDefault();
       if (type === 'co')   toggleCo(row.name);
       if (type === 'area') toggleArea(row.name);
       if (type === 'sm')   toggleSM(row.name);
-    });
+    }, { passive: false });
     tbody.appendChild(tr);
   });
 }
