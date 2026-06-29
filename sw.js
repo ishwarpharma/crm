@@ -4,7 +4,7 @@
    immediately. Falls back to cache when offline.
    ================================================================ */
 
-const CACHE = 'ishwarcrm-v5';
+const CACHE = 'ishwarcrm-v6';
 const SHELL = [
   './',
   './index.html',
