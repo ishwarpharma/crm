@@ -591,8 +591,16 @@ function renderKPIs(data) {
   const bills   = new Set(data.map(r => r.bill).filter(Boolean)).size;
 
   document.getElementById('k-sales').textContent    = fmtMoney(total);
-  document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
-  document.getElementById('k-parties').textContent  = fmtNum(parties);
+
+  const _ld = allData.map(r => r.date).filter(Boolean);
+const _ldt = _ld.length ? new Date(_ld.reduce((a,b) => a > b ? a : b)).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
+document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions' + (_ldt ? ' · till ' + _ldt : ''); 
+   
+//  changed above 3 line to get date. 
+//   document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
+  
+   
+   document.getElementById('k-parties').textContent  = fmtNum(parties);
   document.getElementById('k-items').textContent    = fmtNum(items);
   document.getElementById('k-bills').textContent    = fmtNum(bills);
 }
