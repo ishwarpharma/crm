@@ -180,9 +180,9 @@ PRAJJWAL: {
    
    ROHIT: {
     pin:             '300300',
-    displayName: 'Khandesh Area Manager',
+    displayName: 'Rohit Chalke',
     companies:   null,
-    areas:       ['NASHIK', 'JALGAON', 'DHULE', 'NANDURBAR'],
+    areas:       ['NASHIK', 'AHILYANAGAR', 'JALGAON', 'DHULE', 'NANDURBAR'],
     salesmen:    null,
   },
    
