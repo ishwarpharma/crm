@@ -93,7 +93,7 @@ YOGESH: {
   ROSHAN: {
     pin:             '199806',
     displayName: 'Alkem Team',
-    companies:   ['ALKEM( HC)'],
+    companies:   ['ALKEM(HC)(5)', 'ALKEM(HC)(ND)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
@@ -101,7 +101,7 @@ YOGESH: {
 RAJESH: {
     pin:             '261083',
     displayName: 'Alkem Team',
-    companies:   ['ALKEM( HC)'],
+    companies:   ['ALKEM(HC)(5)', 'ALKEM(HC)(ND)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
@@ -109,7 +109,7 @@ RAJESH: {
  ARUN: {
     pin:             '200513',
     displayName: 'Alkem Team',
-    companies:   ['ALKEM( HC)'],
+    companies:   ['ALKEM(HC)(5)', 'ALKEM(HC)(ND)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
