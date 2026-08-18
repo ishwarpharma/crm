@@ -735,7 +735,7 @@ function renderTables(data) {
   fillTable('itm-body', iRows, 'item');
 
   /* Company table */
-  const coRows = groupBy(data, 'co');
+  const coRows = groupBy(data, 'co').sort((a, b) => a.name.localeCompare(b.name));
   document.getElementById('co-ttl').textContent = 'Company Sales';
   document.getElementById('co-cnt').textContent = coRows.length + ' companies';
   fillTableSimple('co-body', coRows, 'co');
@@ -749,7 +749,7 @@ function renderTables(data) {
   /* Sales Men table */
   const smRows = groupBy(data, 'sm').filter(r =>
     r.name && !r.name.toUpperCase().startsWith('X') && !r.name.includes('SUSPENCE')
-  );
+  ).sort((a, b) => a.name.localeCompare(b.name));
   document.getElementById('sm-ttl').textContent = 'Sales Men';
   document.getElementById('sm-cnt').textContent = smRows.length + ' salesmen';
   fillTableSimple('sm-body', smRows, 'sm');
