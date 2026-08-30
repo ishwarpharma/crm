@@ -8,6 +8,7 @@
 let allData     = [];   // all rows visible to this user (restricted at login)
 let currentUser = null; // logged-in user object from USERS
 let chart       = null; // Chart.js instance
+let swsaUpdatedAt = ''; // formatted date & time SWSA.csv was last modified on the server
 
 /* Dashboard filter state */
 let selPeriod = '1m';
@@ -161,8 +162,20 @@ document.addEventListener('keydown', e => {
 async function loadCSV() {
   showVeil(true);
   try {
-    const res = await fetch('SWSA.csv');
+    const res = await fetch('SWSA.csv', { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    // Capture the file's actual last-modified date & time from the server
+    // (Last-Modified header is always GMT — force display in India Standard Time)
+    const lm = res.headers.get('Last-Modified');
+    if (lm) {
+      const d = new Date(lm);
+      swsaUpdatedAt = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })
+        + ', ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+    } else {
+      swsaUpdatedAt = '';
+    }
+
     const text = await res.text();
     parseCSV(text);
     initDropdowns();
@@ -601,11 +614,10 @@ function renderKPIs(data) {
 
   document.getElementById('k-sales').textContent    = fmtMoney(total);
 
-  const _ld = allData.map(r => r.date).filter(Boolean);
-const _ldt = _ld.length ? new Date(_ld.reduce((a,b) => a > b ? a : b)).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
-document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions' + (_ldt ? ' · till ' + _ldt : ''); 
-   
-//  changed above 3 line to get date. 
+  // Show file update date & time (from SWSA.csv's server Last-Modified) instead of no. of transactions
+  document.getElementById('k-sales-sub').textContent = swsaUpdatedAt ? 'Updated ' + swsaUpdatedAt : data.length.toLocaleString('en-IN') + ' transactions';
+
+//  changed above line to show SWSA.csv file update date & time instead of transaction count/last txn date.
 //   document.getElementById('k-sales-sub').textContent = data.length.toLocaleString('en-IN') + ' transactions';
   
    
