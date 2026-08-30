@@ -162,7 +162,7 @@ document.addEventListener('keydown', e => {
 async function loadCSV() {
   showVeil(true);
   try {
-    const res = await fetch('SWSA.csv', { cache: 'no-store' });
+    const res = await fetch('swsa.csv', { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     // Capture the file's actual last-modified date & time from the server
