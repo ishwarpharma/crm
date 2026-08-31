@@ -118,7 +118,7 @@ RAJESH: {
   UMESH123: {
     pin:          '224466',
     displayName: 'Alkem Team',
-    companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
+    companies:   ['ALKEM(.ALDINE)', 'ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
@@ -126,7 +126,7 @@ RAJESH: {
 PRAJJWAL: {
     pin:         '150400',
     displayName: 'Alkem Team',
-    companies:   ['ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
+    companies:   ['ALKEM(.ALDINE)', 'ALKEM(.CHRONIC)', 'ALKEM(.MAXX)'],
     areas:       null,   // all areas
     salesmen:    null,   // all salesmen
   },
