@@ -162,7 +162,7 @@ PRAJJWAL: {
   },
 
  RAJENDRA: {
-    pin:        '280559',
+    pin:        '982346',
     displayName: 'Rajendra Sakpal',
     companies:   null,
     areas:       ['SATARA', 'SANGLI', 'KOLHAPUR', 'SOLAPUR', 'AHILYANAGAR', 'GOA', 'JALGAON', 'JALNA', 'KOKAN', 'NASHIK', 'PUNE', 'SAMBHAJINAGAR'],
